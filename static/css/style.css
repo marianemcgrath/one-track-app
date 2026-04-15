@@ -1,11 +1,130 @@
-/* -----------------------------------------------
-   OneTrack — style.css
-   Styles
------------------------------------------------ */
+/* OneTrack — Style */
  
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
+:root {
+  --black: #0B0B0B;
+  --dark: #121212;
+  --gold: #D4AF37;
+  --gold-soft: #E6C76B;
+  --white: #FFFFFF;
+  --grey: #2A2A2A;
 }
- 
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* App Container */
+.app {
+  width: 360px;
+  padding: 24px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo_design {
+  width: 140px;
+  height: auto;
+  display: block;
+  margin: 0 auto 16px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.tagline {
+  font-size: 14px;
+  color: var(--gold);
+  margin-top: 4px;
+}
+
+/* Cards */
+.card {
+  background: var(--dark);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 14px;
+  color: var(--gold-soft);
+  margin-bottom: 10px;
+}
+
+.habit {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.day {
+  font-size: 14px;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+/* Progress Grid */
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.square {
+  width: 100%;
+  padding-top: 100%;
+  background: var(--grey);
+  border-radius: 4px;
+}
+
+.square.completed {
+  background: var(--gold);
+}
+
+.square.current {
+  background: var(--white);
+}
+
+/* Button */
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gold);
+  border: none;
+  border-radius: 10px;
+  color: var(--black);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: var(--gold-soft);
+}
+
+/* Subtle Glow Effect */
+.square.completed,
+.primary-btn {
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
