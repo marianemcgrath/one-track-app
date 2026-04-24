@@ -12,54 +12,67 @@ def create_tables():
 
 # Source: https://www.sqlitetutorial.net/sqlite-foreign-key/
 
+    # Users table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+        id            INTEGER PRIMARY KEY AUTOINCREMENT,
+        username      TEXT    NOT NULL UNIQUE CHECK(username <> ''),
+        email         TEXT    NOT NULL UNIQUE CHECK(email <> ''),
+        password_hash TEXT    NOT NULL,
+        created_at    DATETIME DEFAULT CURRENT_TIMESTAMP)
+    """)
 
     # Habits table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS habits (
             id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id       INTEGER NOT NULL,
             name          TEXT    NOT NULL CHECK(name <> ''),
-            quit_date     DATE    NOT NULL,
+            start_date     DATE    NOT NULL,
             cost_per_day  REAL    NOT NULL CHECK(cost_per_day >= 0),
             reason        TEXT,
-            is_active     INTEGER DEFAULT 1 CHECK(is_active IN (0,1))
+            is_active     INTEGER DEFAULT 1 CHECK(is_active IN (0,1)),
+            FOREIGN KEY (user_id)
+                REFERENCES users(id)
+                ON DELETE CASCADE
         )
     """)
 
-    # Ensure only ONE active habit at a time
+    # Ensure only ONE active habit at a time per user
     cur.execute("""
         CREATE UNIQUE INDEX IF NOT EXISTS idx_one_active_habit
-        ON habits(is_active)
+        ON habits(user_id, is_active)
         WHERE is_active = 1
-    """) 
-
+    """)
    
     # Rewards table
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS rewards (
-            id            INTEGER PRIMARY KEY AUTOINCREMENT,
-            habit_id      INTEGER NOT NULL,
-            title         TEXT    NOT NULL CHECK(title <> ''),
-            days_target   INTEGER NOT NULL CHECK(days_target > 0),
-            claimed       INTEGER DEFAULT 0 CHECK(claimed IN (0,1)),
-            FOREIGN KEY (habit_id) 
-                REFERENCES habits(id)
-                ON DELETE CASCADE) 
+        id            INTEGER PRIMARY KEY AUTOINCREMENT,
+        habit_id      INTEGER NOT NULL,
+        title         TEXT    NOT NULL CHECK(title <> ''),
+        days_target   INTEGER NOT NULL CHECK(days_target > 0),
+        claimed       INTEGER DEFAULT 0 CHECK(claimed IN (0,1)),
+        claimed_at    DATETIME,
+        FOREIGN KEY (habit_id) 
+            REFERENCES habits(id)
+            ON DELETE CASCADE)
     """) # If we delete habit, then rewards & milestones auto-delete
     
 
     # Milestones table    
     cur.execute("""
         CREATE TABLE IF NOT EXISTS milestones (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-            habit_id        INTEGER NOT NULL,
-            days_required   INTEGER NOT NULL CHECK(days_required > 0),
-            label           TEXT    NOT NULL CHECK(label <> ''),
-            achieved        INTEGER DEFAULT 0 CHECK(achieved IN (0,1)),
-            FOREIGN KEY (habit_id) 
-                REFERENCES habits(id)
-                ON DELETE CASCADE
-        )
+        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+        habit_id        INTEGER NOT NULL,
+        days_required   INTEGER NOT NULL CHECK(days_required > 0),
+        label           TEXT    NOT NULL CHECK(label <> ''),
+        achieved        INTEGER DEFAULT 0 CHECK(achieved IN (0,1)),
+        achieved_at     DATETIME,
+        FOREIGN KEY (habit_id) 
+            REFERENCES habits(id)
+            ON DELETE CASCADE)
     """)
 
     con.commit()
