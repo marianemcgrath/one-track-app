@@ -14,67 +14,10 @@ def get_connection():
     con.execute("PRAGMA foreign_keys = ON")
     con.row_factory = sqlite3.Row  # Allows dict-style access to rows
     return con
-def get_active_habit(user_id):
-    con = get_connection()
-    cur = con.cursor()
-    row = cur.execute("""
-        SELECT * FROM habits WHERE is_active = 1 AND user_id = ? LIMIT 1
-    """, (user_id,)).fetchone()
-    con.close()
-
-    if row is None:
-        return None
-    return dict(row)
 
 
-def claim_reward(reward_id):
-    with get_connection() as con:
-        cur = con.cursor()
+# ── User functions ───────────────────────────────────────────────────────────
 
-        reward = cur.execute("""
-            SELECT * FROM rewards WHERE id = ?
-        """, (reward_id,)).fetchone()
-
-        if reward is None:
-            return {"error": "Reward not found"}
-
-        if reward["claimed"]:
-            return {"error": "Reward already claimed"}
-
-        cur.execute("""
-            UPDATE rewards SET claimed = 1, claimed_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        """, (reward_id,))
-
-    return {
-        "id": reward_id,
-        "status": "claimed"
-    }
-
-
-def achieve_milestone(milestone_id):
-    with get_connection() as con:
-        cur = con.cursor()
-
-        milestone = cur.execute("""
-            SELECT * FROM milestones WHERE id = ?
-        """, (milestone_id,)).fetchone()
-
-        if milestone is None:
-            return {"error": "Milestone not found"}
-
-        if milestone["achieved"]:
-            return {"error": "Milestone already achieved"}
-
-        cur.execute("""
-            UPDATE milestones SET achieved = 1, achieved_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        """, (milestone_id,))
-
-    return {
-        "id": milestone_id,
-        "status": "achieved"
-    }
 def add_user(username, email, password):
     if not username:
         return {"error": "Username is required"}
@@ -83,7 +26,6 @@ def add_user(username, email, password):
     if not password:
         return {"error": "Password is required"}
 
-    # Hash the password before storing it
     password_hash = hashlib.sha256(password.encode()).hexdigest()
 
     with get_connection() as con:
@@ -102,6 +44,7 @@ def add_user(username, email, password):
         "username": username,
         "email": email
     }
+
 
 # ── Habit functions ──────────────────────────────────────────────────────────
 
@@ -158,6 +101,65 @@ def add_habit(user_id, name, start_date, cost_per_day, reason=""):
     }
 
 
+def get_active_habit(user_id):
+    con = get_connection()
+    cur = con.cursor()
+    row = cur.execute("""
+        SELECT * FROM habits WHERE is_active = 1 AND user_id = ? LIMIT 1
+    """, (user_id,)).fetchone()
+    con.close()
+
+    if row is None:
+        return None
+    return dict(row)
+
+
+def update_habit(habit_id, name=None, cost_per_day=None, reason=None):
+    with get_connection() as con:
+        cur = con.cursor()
+
+        habit = cur.execute("""
+            SELECT * FROM habits WHERE id = ?
+        """, (habit_id,)).fetchone()
+
+        if habit is None:
+            return {"error": "Habit not found"}
+
+        updated_name = name if name is not None else habit["name"]
+        updated_cost = cost_per_day if cost_per_day is not None else habit["cost_per_day"]
+        updated_reason = reason if reason is not None else habit["reason"]
+
+        cur.execute("""
+            UPDATE habits SET name = ?, cost_per_day = ?, reason = ?
+            WHERE id = ?
+        """, (updated_name, updated_cost, updated_reason, habit_id))
+
+    return {
+        "id": habit_id,
+        "name": updated_name,
+        "cost_per_day": updated_cost,
+        "reason": updated_reason
+    }
+
+
+def delete_habit(habit_id):
+    with get_connection() as con:
+        cur = con.cursor()
+
+        habit = cur.execute("""
+            SELECT id FROM habits WHERE id = ?
+        """, (habit_id,)).fetchone()
+
+        if habit is None:
+            return {"error": "Habit not found"}
+
+        cur.execute("""
+            DELETE FROM habits WHERE id = ?
+        """, (habit_id,))
+
+    return {"status": "deleted", "id": habit_id}
+
+
 # ── Reward functions ─────────────────────────────────────────────────────────
 
 def add_reward(habit_id, title, days_target):
@@ -192,6 +194,49 @@ def add_reward(habit_id, title, days_target):
     }
 
 
+def claim_reward(reward_id):
+    with get_connection() as con:
+        cur = con.cursor()
+
+        reward = cur.execute("""
+            SELECT * FROM rewards WHERE id = ?
+        """, (reward_id,)).fetchone()
+
+        if reward is None:
+            return {"error": "Reward not found"}
+
+        if reward["claimed"]:
+            return {"error": "Reward already claimed"}
+
+        cur.execute("""
+            UPDATE rewards SET claimed = 1, claimed_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        """, (reward_id,))
+
+    return {
+        "id": reward_id,
+        "status": "claimed"
+    }
+
+
+def delete_reward(reward_id):
+    with get_connection() as con:
+        cur = con.cursor()
+
+        reward = cur.execute("""
+            SELECT id FROM rewards WHERE id = ?
+        """, (reward_id,)).fetchone()
+
+        if reward is None:
+            return {"error": "Reward not found"}
+
+        cur.execute("""
+            DELETE FROM rewards WHERE id = ?
+        """, (reward_id,))
+
+    return {"status": "deleted", "id": reward_id}
+
+
 # ── Milestone functions ──────────────────────────────────────────────────────
 
 def add_milestone(habit_id, days_required, label):
@@ -216,11 +261,36 @@ def add_milestone(habit_id, days_required, label):
             VALUES (?, ?, ?)
         """, (habit_id, days_required, label))
 
-        milestone_id = cur.lastrowid  # ID of new milestone
+        milestone_id = cur.lastrowid
 
     return {
         "id": milestone_id,
         "habit_id": habit_id,
         "days_required": days_required,
         "label": label
+    }
+
+
+def achieve_milestone(milestone_id):
+    with get_connection() as con:
+        cur = con.cursor()
+
+        milestone = cur.execute("""
+            SELECT * FROM milestones WHERE id = ?
+        """, (milestone_id,)).fetchone()
+
+        if milestone is None:
+            return {"error": "Milestone not found"}
+
+        if milestone["achieved"]:
+            return {"error": "Milestone already achieved"}
+
+        cur.execute("""
+            UPDATE milestones SET achieved = 1, achieved_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        """, (milestone_id,))
+
+    return {
+        "id": milestone_id,
+        "status": "achieved"
     }

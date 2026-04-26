@@ -52,6 +52,29 @@ def add_habit():
         return jsonify(result), 400
     return jsonify({"status": "created", "habit": result}), 201
 
+@app.route('/api/habit/<int:habit_id>', methods=['DELETE'])
+def delete_habit(habit_id):
+    result = dao.delete_habit(habit_id)
+    if "error" in result:
+        return jsonify(result), 404
+    return jsonify(result), 200
+
+
+@app.route('/api/habit/<int:habit_id>', methods=['PUT'])
+def update_habit(habit_id):
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    result = dao.update_habit(
+        habit_id=habit_id,
+        name=data.get('name'),
+        cost_per_day=data.get('cost_per_day'),
+        reason=data.get('reason')
+    )
+    if "error" in result:
+        return jsonify(result), 404
+    return jsonify({"status": "updated", "habit": result}), 200
 
 # Reward endpoints
 @app.route('/api/reward', methods=['POST'])
@@ -78,6 +101,13 @@ def claim_reward(reward_id):
     return jsonify({"status": "claimed", "reward": result})
 
 
+@app.route('/api/reward/<int:reward_id>', methods=['DELETE'])
+def delete_reward(reward_id):
+    result = dao.delete_reward(reward_id)
+    if "error" in result:
+        return jsonify(result), 404
+    return jsonify(result), 200
+
 # Milestone endpoints
 @app.route('/api/milestone', methods=['POST'])
 def add_milestone():
@@ -101,7 +131,6 @@ def achieve_milestone(milestone_id):
     if "error" in result:
         return jsonify(result), 400
     return jsonify({"status": "achieved", "milestone": result})
-
 
 # Run
 if __name__ == '__main__':

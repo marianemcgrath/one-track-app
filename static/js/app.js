@@ -1,19 +1,24 @@
-// -----------------------------------------------
-// OneTrack — app.js
-// All AJAX calls to the Flask API
-// -----------------------------------------------
- 
+// AJAX calls to the Flask API
+
 const API_BASE = "http://127.0.0.1:5000";
 
-// -----------------------------------------------
-// Habit functions
-// -----------------------------------------------
+//------User functions-----------------------------------
 
-// -----------------------------------------------
-// Reward functions
-// -----------------------------------------------
+async function addUser(username, email, password) {
+  try {const res = await fetch(`${API_BASE}/api/user`, 
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to add user");
+    return data;} catch (err)
 
-// -----------------------------------------------
-// AI Support functions
-// -----------------------------------------------
- 
+//------Habit functions----------------------------------
+
+//------Reward functions---------------------------------
+
+//------Milestone functions------------------------------
+
+//------AI Support functions-----------------------------
