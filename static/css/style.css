@@ -21,10 +21,10 @@ body {
   font-family: 'Inter', sans-serif;
   background: var(--black);
   color: var(--white);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  padding: 24px 0;
 }
 
 /* App Container */
@@ -127,4 +127,234 @@ h1 {
 .square.completed,
 .primary-btn {
   box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+/* Error / Empty / Badge */
+.error-msg {
+  color: #e05555;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.empty-msg {
+  color: #aaa;
+  font-size: 13px;
+  font-style: italic;
+  list-style: none;
+  padding: 8px 0;
+}
+
+.badge {
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Danger Button */
+.btn-danger {
+  background: transparent;
+  border: 1px solid #e05555;
+  color: #e05555;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #e05555;
+  color: var(--white);
+}
+
+/* Item Actions (milestones + rewards rows) */
+.item-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.item-actions button {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.item-actions button:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+
+/* Stats Row */
+#stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--grey);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Progress Bar */
+#progress-bar-wrap {
+  background: var(--grey);
+  border-radius: 999px;
+  height: 8px;
+  width: 100%;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 999px;
+  width: 0%;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
+/* Milestone + Reward list items */
+#milestones-list li,
+#rewards-list li {
+  background: var(--grey);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  list-style: none;
+  font-size: 14px;
+}
+
+#milestones-list li.achieved,
+#rewards-list li.claimed {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+/* Forms (add milestone, add reward, add habit) */
+#add-habit-form,
+#add-milestone-form,
+#add-reward-form,
+#edit-habit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background: var(--grey);
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: var(--white);
+  padding: 10px 12px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--gold);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Section headings */
+#milestones-section h3,
+#rewards-section h3,
+#edit-habit-section h3 {
+  font-size: 13px;
+  color: var(--gold-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+/* Habit header */
+#habit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+#habit-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.habit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.habit-actions button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.habit-actions button:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+
+/* Habit reason */
+.habit-reason {
+  font-size: 13px;
+  color: #aaa;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+/* Loading message */
+#loading-msg {
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  margin-top: 40px;
 }

@@ -15,7 +15,7 @@
    - 2.1 [Rationale](#21-rationale)
    - 2.2 [Name & Visual Identity](#22-name--visual-identity)
    - 2.3 [Tagline](#23-tagline)
-3. [The Science](#3-the-science)
+3. [The Science](#3-the-scientific-background)
    - 3.1 [The 28-Day Rule](#31-the-28-day-rule)
    - 3.2 [One Habit at a Time](#32-one-habit-at-a-time)
 4. [Features](#4-features)
