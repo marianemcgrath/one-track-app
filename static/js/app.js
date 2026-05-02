@@ -61,7 +61,7 @@ async function updateHabit(habitId, fields = {}) {
     const res = await fetch(`${API_BASE}/api/habit/${habitId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(fields) // pass only what changed: { name, cost_per_day, reason }
+      body: JSON.stringify(fields) // only what changed: { name, cost_per_day, reason }
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Failed to update habit");
@@ -86,7 +86,7 @@ async function deleteHabit(habitId) {
   }
 }
 
-//------Reward functions---------------------------------
+//Reward functions
 
 async function addReward(habitId, title, daysTarget) {
   try {
@@ -137,7 +137,7 @@ async function deleteReward(rewardId) {
 }
 
 
-//------Milestone functions------------------------------
+//Milestone functions
 
 async function addMilestone(habitId, daysRequired, label) {
   try {
