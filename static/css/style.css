@@ -384,7 +384,7 @@ textarea {
   margin-top: 40px;
 }
 
-/* ── Desktop layout ─────────────────────────────── */
+/* Desktop layout */
 @media (min-width: 768px) {
 
   body {
@@ -454,8 +454,9 @@ textarea {
     margin: 0 auto;
   }
 
-  /* Active habit section uses CSS grid display:contents
-     so its children participate in the parent grid */
+  /* Active habit section uses CSS grid display to allow 
+  header/stats on left and rewards/edit on right */
+  
   #active-habit-section {
     display: contents;
   }

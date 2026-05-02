@@ -5,7 +5,15 @@ import onetrack_dao as dao
 app = Flask(__name__)
 CORS(app)
 
+from flask import send_from_directory
 
+@app.route('/')
+def index():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/<path:filename>')
+def static_files(filename):
+    return send_from_directory('.', filename)
 # User endpoints
 @app.route('/api/user', methods=['POST'])
 def add_user():
