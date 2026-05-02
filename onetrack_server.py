@@ -1,20 +1,21 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import onetrack_dao as dao
 
 app = Flask(__name__)
 CORS(app)
 
-from flask import send_from_directory
-
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory('static', 'index.html')
 
 @app.route('/<path:filename>')
 def static_files(filename):
-    return send_from_directory('.', filename)
+    return send_from_directory('static', filename)
+
+
 # User endpoints
+
 @app.route('/api/user', methods=['POST'])
 def add_user():
     data = request.get_json()
@@ -32,6 +33,7 @@ def add_user():
 
 
 # Habit endpoints
+
 @app.route('/api/habit', methods=['GET'])
 def get_habit():
     user_id = request.args.get('user_id')
