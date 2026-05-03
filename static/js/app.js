@@ -2,7 +2,7 @@
 
 const API_BASE = "https://mariRmcgrath.pythonanywhere.com";
 
-//------User functions-----------------------------------
+//User functions
 
 async function addUser(username, email, password) {
   try {
@@ -20,7 +20,7 @@ async function addUser(username, email, password) {
   }
 }
 
-//------Habit functions----------------------------------
+//Habit functions
 
 async function getActiveHabit(userId) {
   try {

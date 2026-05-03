@@ -3,28 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneTrack – Rewards</title>
+    <title>OneTrack — Rewards</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        #rewards-wrap { display: contents; }
+        #habit-summary-card { background: var(--dark); border: 1px solid var(--grey); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        #habit-summary-card h2 { font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+        #habit-summary-card p { font-size: 13px; color: #aaa; font-style: italic; margin-bottom: 16px; }
+        #summary-progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-bottom: 6px; }
+        #summary-progress-wrap { background: var(--grey); border-radius: 999px; height: 7px; overflow: hidden; margin-bottom: 16px; }
+        #summary-progress-bar { height: 100%; background: var(--gold); border-radius: 999px; width: 0%; transition: width 0.4s ease; box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
+        #summary-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        #ai-support-card { background: var(--dark); border: 1px solid #D4AF3733; border-radius: 12px; padding: 24px 20px; text-align: center; margin-bottom: 20px; }
+        #ai-support-card .ai-icon { font-size: 28px; margin-bottom: 10px; }
+        #ai-support-card h3 { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+        #ai-support-card p { font-size: 12px; color: #888; margin-bottom: 16px; }
+        #ai-support-card a { display: inline-block; background: var(--gold); color: var(--black); font-size: 13px; font-weight: 600; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: 0.2s ease; }
+        #ai-support-card a:hover { background: var(--gold-soft); }
+        #rewards-main { margin-bottom: 20px; }
+        #rewards-main h3 { font-size: 13px; color: var(--gold-soft); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+        .reward-item { background: var(--grey); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .reward-item.claimed { opacity: 0.45; }
+        .reward-item.claimed .reward-title { text-decoration: line-through; }
+        .reward-title { font-size: 14px; color: var(--white); font-weight: 500; }
+        .reward-day { font-size: 12px; color: #888; margin-top: 3px; }
+        .reward-item-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        #no-habit-msg { text-align: center; color: #aaa; font-size: 14px; margin-top: 60px; line-height: 1.6; }
+        #no-habit-msg a { color: var(--gold); text-decoration: none; }
+        #add-reward-form { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+        @media (min-width: 768px) {
+            #rewards-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+            #left-col { grid-column: 1; }
+            #rewards-main { grid-column: 2; }
+        }
+    </style>
 </head>
 <body>
- 
-<header>
-    <div class="header">
-        <img src="images/onetrack_logo.png" alt="OneTrack" class="logo_design">
-        <p class="tagline">One Habit. On Track.</p>
+    <div class="app">
+
+        <header>
+            <div class="header">
+                <img src="images/onetrack_logo.png" alt="OneTrack" class="logo_design">
+                <p class="tagline">One Habit. On Track.</p>
+            </div>
+            <nav>
+                <a href="index.html">Dashboard</a>
+                <a href="rewards.html" class="active">Rewards</a>
+                <a href="support.html">AI Support</a>
+            </nav>
+        </header>
+
+        <main>
+
+            <div id="no-habit-msg" style="display:none;">
+                <p>You don't have an active habit yet.<br>
+                <a href="index.html">Start tracking one first</a> to set up rewards.</p>
+            </div>
+
+            <div id="rewards-wrap" style="display:none;">
+
+                <div id="left-col">
+                    <div id="habit-summary-card">
+                        <h2 id="summary-habit-name"></h2>
+                        <p id="summary-habit-reason"></p>
+                        <div id="summary-progress-label">
+                            <span id="summary-day-label">Day 0 of 28</span>
+                            <span id="summary-pct">0%</span>
+                        </div>
+                        <div id="summary-progress-wrap">
+                            <div id="summary-progress-bar"></div>
+                        </div>
+                        <div id="summary-stats">
+                            <div class="stat-card">
+                                <span class="stat-value" id="summary-days"></span>
+                                <span class="stat-label">Days</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="summary-remaining"></span>
+                                <span class="stat-label">Days left</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="summary-saved"></span>
+                                <span class="stat-label">Saved</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ai-support-card">
+                        <div class="ai-icon">💬</div>
+                        <h3>Need support?</h3>
+                        <p>Your AI coach is ready to help.</p>
+                        <a href="support.html">Talk to AI Support</a>
+                    </div>
+                </div>
+
+                <div id="rewards-main">
+                    <h3>Your Rewards</h3>
+                    <ul id="rewards-list"></ul>
+                    <p id="reward-error" class="error-msg" style="display:none;"></p>
+                    <form id="add-reward-form">
+                        <input type="text" id="reward-title" placeholder="Reward e.g. New runners" required>
+                        <input type="number" id="reward-days" placeholder="Unlock at day" min="1" max="28" required>
+                        <button type="submit" class="primary-btn">Add Reward</button>
+                    </form>
+                </div>
+
+            </div>
+
+            <p id="loading-msg">Loading...</p>
+
+        </main>
     </div>
-    <nav>
-        <a href="index.html">Dashboard</a>
-        <a href="rewards.html" class="active">Rewards</a>
-        <a href="support.html">AI Support</a>
-    </nav>
-</header>
- 
-    <main>
-        <!-- Rewards and milestones content will go here -->
-        <h2>Your Rewards</h2>
-    </main>
- 
+
     <script src="js/app.js"></script>
+    <script src="js/rewards.js"></script>
 </body>
 </html>
