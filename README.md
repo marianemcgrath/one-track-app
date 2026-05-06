@@ -70,8 +70,28 @@ The visual identity reflects this focus:
 | Element | Choice | Rationale |
 |---|---|---|
 | Colour palette | Black & Gold | Authority, discipline, reward |
-| Logo | Maze (?) | The journey of breaking a bad habit is rarely straight, but there is always a way out |
+| Logo | Maze | The journey of breaking a bad habit is rarely straight, but there is always a way out |
 | Typography | Clean, minimal | Keeping user focused on what matters |
+
+**Colour Palette (Black & Gold):**
+
+Source: https://mailchimp.com/resources/color-psychology/ (Colour Psychology in Branding)
+
+Source: https://www.colorpsychology.org/blog/color-of-justice-the-psychology-of-black-in-authority-and-power/ (Psychology of Black — Authority and Power)
+
+Source: https://pratibodh.org/index.php/pratibodh/article/view/154/165 (Colour Psychology in UX/UI Design)
+
+**Logo (Maze):**
+
+Source: https://symbolixe.com/maze-symbolism/ (Maze Symbolism)
+
+Source: https://symbolopedia.com/maze-symbolism-meaning/ (Maze Symbolism and Meaning)
+
+**Typography (Clean, Minimal):**
+
+Source: https://618media.com/en/blog/why-minimalist-typography-is-still-trending/ (Minimalist Typography and UX)
+
+Source: https://uitop.design/blog/design/minimalist-ux/ (Minimalist UX Design Principles)
 
 ### 2.3 Tagline
 
@@ -97,17 +117,17 @@ The 28-day window is a **meaningful first threshold**, not the finish line. And 
 
 **Completing 28 days is not the full finishing line. But it is the point that the user shows commitment to earn the right to begin a new habit break.**
 
-Sources: https://www.theguardian.com/lifeandstyle/2009/oct/10/change-your-life-habit-28-day-rule
+Source: https://www.theguardian.com/lifeandstyle/2009/oct/10/change-your-life-habit-28-day-rule (28-Day Habit Rule)
 
-Source: https://pubmed.ncbi.nlm.nih.gov/35690891/
+Source: https://pubmed.ncbi.nlm.nih.gov/35690891/ (Habit Formation Research)
 
-Source: https://www.facebook.com/watch/?v=1082379843295875
+Source: https://www.facebook.com/watch/?v=1082379843295875 (Habit Formation Video)
 
-Source: https://www.citizensinformation.ie/en/health/health-services/addiction-treatment-services/drug-alcohol-addiction-services/
+Source: https://www.citizensinformation.ie/en/health/health-services/addiction-treatment-services/drug-alcohol-addiction-services/ (Drug & Alcohol Addiction Services)
 
-Source: https://lighthousebhsolutions.com/the-first-30-days-of-recovery-what-happens-and-how-to-prepare/ 
+Source: https://lighthousebhsolutions.com/the-first-30-days-of-recovery-what-happens-and-how-to-prepare/ (First 30 Days of Recovery)
 
-Source: https://www.victoriasincredibleedibles.ie/blog/28-days-to-a-new-you-making-or-breaking-habits
+Source: https://www.victoriasincredibleedibles.ie/blog/28-days-to-a-new-you-making-or-breaking-habits (28 Days to a New You)
 
 
 ### 3.2 One Habit at a Time
@@ -120,9 +140,10 @@ Research also indicates that incremental change is more effective than attemptin
 
 **OneTrack intentionally enforces a one-habit-at-a-time approach, removing the burden of overcommitting from the user and guiding them toward a more focused and achievable path to change.** 
 
-Source: https://www.worklifepsych.com/why-cant-i-stick-to-my-new-habits/
+Source: https://www.worklifepsych.com/why-cant-i-stick-to-my-new-habits/ (Habit Consistency & Cognitive Load)
 
-Source: https://www.helpguide.org/mental-health/wellbeing/how-to-break-bad-habits-and-change-negative-behaviors
+Source: https://www.helpguide.org/mental-health/wellbeing/how-to-break-bad-habits-and-change-negative-behaviors (Breaking Bad Habits)
+
 
 ### 3.3 Behavioural Principles Used in the App
 
@@ -137,6 +158,36 @@ The app draws from:
  - Positive reinforcement through streaks
 
  - Loss aversion through money saved tracking
+
+**Habit Loop Theory (Cue-Routine-Reward):**
+
+Source: https://thedecisionlab.com/reference-guide/psychology/car-model (Cue-Action-Reward Model)
+
+Source: https://www.tougherminds.co.uk/2024/08/27/understanding-the-habit-loop-cue-routine-reward/ (Understanding the Habit Loop)
+
+
+**Identity-Based Habit Formation:**
+
+Source: https://jamesclear.com/identity-based-habits (Identity-Based Habits — James Clear)
+
+
+**Small Wins Theory:**
+
+Source: https://icap2018.com/small-wins-momentum-psychology/ (Small Wins & Psychological Momentum)
+
+Source: https://youngvibrant.wordpress.com/2025/01/24/the-psychology-of-small-wins/ (Psychology of Small Wins)
+
+
+**Positive Reinforcement Through Streaks:**
+
+Source: https://uxmag.medium.com/the-psychology-of-hot-streak-game-design-how-to-keep-players-coming-back-every-day-without-shame-3dde153f239c (Psychology of Streaks in Design)
+
+
+**Loss Aversion Through Money Saved Tracking:**
+
+Source: https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/loss-aversion/ (Loss Aversion — Behavioural Economics)
+
+Source: https://thedecisionlab.com/biases/loss-aversion (Loss Aversion — The Decision Lab)
 
 ---
 
@@ -259,21 +310,18 @@ You should see: `✅ Database upgraded successfully!`
 
 ```bash
 python onetrack_server.py
-```
 
-The server runs at: `http://127.0.0.1:5000`
+```
+The server runs at: http://127.0.0.1:5000
+
 
 **4. Open the frontend**
 
-Open `index.html` in your browser, or if using GitHub Codespaces, forward port 5000 and open the forwarded URL.
+Open `index.html` in your browser, or visit the live deployment at: `https://marirmcgrath.pythonanywhere.com/`
 
 ---
 
 # 8. References
-
-Behavioural Science:
-- James Clear — *Atomic Habits*  
-- Charles Duhigg — *The Power of Habit*  
 
 Technical Sources:
 - Flask Documentation  
