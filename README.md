@@ -323,10 +323,7 @@ Open `index.html` in your browser, or visit the live deployment at: `https://mar
 
 # 8. References
 
-Technical Sources:
-- Flask Documentation  
-- Bootstrap Documentation  
-- REST API Design Resources
+Sources used to create this project (including AI prompts) were placed throughout the documents, below the section it was required.
 
 ---
 
