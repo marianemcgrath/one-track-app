@@ -11,7 +11,7 @@
         #support-header h2 { font-size: 18px; font-weight: 700; color: var(--white); }
         #support-header p { font-size: 13px; color: #aaa; margin-top: 4px; }
         #habit-context-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--grey); border: 1px solid var(--gold); border-radius: 999px; padding: 6px 14px; font-size: 12px; color: var(--gold); margin-top: 12px; }
-        #habit-context-pill span { color: var(--white); }
+        #live-timer {margin-top: 14px;font-size: 14px;color: var(--gold-soft);font-weight: 600;letter-spacing: 0.02em;}
         #chat-window { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 4px 0 16px 0; scrollbar-width: thin; scrollbar-color: var(--grey) transparent; }
         .msg { max-width: 85%; padding: 12px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; animation: fadeUp 0.2s ease; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -59,10 +59,11 @@
                 <div id="support-header">
                     <h2>AI Support</h2>
                     <p>Your personal habit-breaking coach.</p>
-                    <div id="habit-context-pill">
-                        🎯 <span id="pill-text">Loading...</span>
-                    </div>
+                <div id="habit-context-pill">
+                    🎯 <span id="pill-text">Loading...</span>
                 </div>
+
+                <div id="live-timer"></div>
 
                 <div id="chat-window"></div>
 

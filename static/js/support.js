@@ -40,7 +40,7 @@ async function loadHabitContext() {
 
         appendMessage(
             "ai",
-            `Hi! I'm here to support you on your journey. You're on day ${daysElapsed} of breaking your ${habit.name.toLowerCase()} habit — that's real progress. 💛\n\nHow are you feeling today?`
+            `Hi! I'm here to support you on your journey. You're making real progress breaking your ${habit.name.toLowerCase()} habit. 💛\n\nHow are you feeling today?`
         );
 
     } catch (err) {
@@ -145,7 +145,12 @@ function buildSystemPrompt() {
         `;
     }
 
-    const daysElapsed = calcDaysElapsed(habitContext.start_date);
+    const daysElapsed = calcDaysElapsed(habit.start_date);
+
+    document.getElementById("pill-text").textContent =
+        `${habit.name}`;
+
+    startLiveTimer(habit.start_date);
 
     const daysRemaining = Math.max(0, 28 - daysElapsed);
 
@@ -233,6 +238,41 @@ function setLoading(isLoading) {
 
 // Helpers
 
+function startLiveTimer(startDate) {
+
+    function updateTimer() {
+
+        const start = new Date(startDate);
+
+        const now = new Date();
+
+        const diff = now - start;
+
+        const days = Math.floor(
+            diff / (1000 * 60 * 60 * 24)
+        );
+
+        const hours = Math.floor(
+            (diff / (1000 * 60 * 60)) % 24
+        );
+
+        const minutes = Math.floor(
+            (diff / (1000 * 60)) % 60
+        );
+
+        const timer = document.getElementById("live-timer");
+
+        if (timer) {
+
+            timer.textContent =
+                `${days} days • ${hours} hours • ${minutes} minutes smoke-free`;
+        }
+    }
+
+    updateTimer();
+
+    setInterval(updateTimer, 60000);
+}
 
 function calcDaysElapsed(startDate) {
 
