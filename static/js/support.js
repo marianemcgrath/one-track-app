@@ -98,7 +98,7 @@ function wireSupportMessages() {
 
         sendBtn.addEventListener(
             "click",
-            sendSupportMessage
+            sendMessage
         );
     }
 
@@ -110,7 +110,7 @@ function wireSupportMessages() {
 
                 e.preventDefault();
 
-                sendSupportMessage();
+                sendMessage();
             }
         });
     }
@@ -149,7 +149,12 @@ async function sendMessage() {
 }
 
 function sendQuick(text) {
-    document.getElementById("chat-input").value = text;
+
+    const input =
+        document.getElementById("chat-input");
+
+    input.value = text;
+
     sendMessage();
 }
 
@@ -456,7 +461,7 @@ that change is possible. Protect your progress.
 function addChatMessage(sender, text) {
 
     const messagesContainer =
-        document.getElementById("support-messages");
+        document.getElementById("chat-window");
 
     if (!messagesContainer) return;
 
@@ -483,7 +488,7 @@ function addChatMessage(sender, text) {
 function showTypingIndicator() {
 
     const container =
-        document.getElementById("support-messages");
+        document.getElementById("chat-window");
 
     if (!container) return;
 
