@@ -22,11 +22,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // LOAD HABIT
+// LOAD HABIT
 async function loadSupportHabit() {
 
     try {
 
         if (typeof USER_ID === 'undefined' || !USER_ID) {
+
             setTimeout(loadSupportHabit, 100);
             return;
         }
@@ -37,39 +39,26 @@ async function loadSupportHabit() {
             document.getElementById("pill-text");
 
         if (habitNameSpan) {
+
             habitNameSpan.textContent =
                 supportHabit
                     ? supportHabit.name
                     : "No active habit";
         }
 
+        // HIDE LOADING
+        document.getElementById("loading-msg").style.display = "none";
+
+        // NO HABIT STATE
         if (!supportHabit) {
 
-            const messagesDiv =
-                document.getElementById("chat-window");
-
-            if (messagesDiv) {
-
-                messagesDiv.innerHTML = `
-                    <div class="support-message">
-                        <p>👋 Welcome to OneTrack Coach!</p>
-
-                        <p>
-                            Create a habit on the Dashboard first —
-                            whether it's smoking, drinking, gambling,
-                            screen time, vaping, or any habit you want
-                            to break — then I can help support you.
-                        </p>
-
-                        <a href="/" class="btn">
-                            Go to Dashboard
-                        </a>
-                    </div>
-                `;
-            }
+            document.getElementById("no-habit-msg").style.display = "block";
 
             return;
         }
+
+        // SHOW SUPPORT UI
+        document.getElementById("support-wrap").style.display = "flex";
 
         // Initial welcome message
         const stats = await getCurrentStats();
