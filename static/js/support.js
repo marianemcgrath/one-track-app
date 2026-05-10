@@ -1,5 +1,7 @@
 // OneTrack — Support Page (Coach)
 
+console.log("support.js loaded");
+
 let supportHabit = null;
 let timerInterval = null;
 
