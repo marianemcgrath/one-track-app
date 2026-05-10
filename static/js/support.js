@@ -118,14 +118,15 @@ async function sendMessage() {
 
     } catch (err) {
 
-    setLoading(false);
+        setLoading(false);
 
-    console.error("FULL ERROR:", err);
+        console.error("FULL ERROR:", err);
 
-    appendMessage(
-        "ai",
-        `ERROR: ${err.message}`
-    );
+        appendMessage(
+            "ai",
+            `ERROR: ${err.message}`
+        );
+    }
 }
 
 // Build system prompt
@@ -269,19 +270,9 @@ function setupEnterToSend() {
 }
 
 function show(id) {
-
-    const el = document.getElementById(id);
-
-    if (el) {
-        el.style.display = "";
-    }
+    document.getElementById(id).style.display = "";
 }
 
 function hide(id) {
-
-    const el = document.getElementById(id);
-
-    if (el) {
-        el.style.display = "none";
-    }
-}}
+    document.getElementById(id).style.display = "none";
+}

@@ -171,9 +171,13 @@ def ai_support():
             timeout=20)
 
         data = response.json()
+        print("ANTHROPIC RESPONSE:", data)
 
         if response.status_code != 200:
-            return jsonify({"error": data}), 500
+            print("ANTHROPIC ERROR:", data)
+            return jsonify({
+                "error": str(data)
+            }), 500
 
         reply = data["content"][0]["text"]
 
