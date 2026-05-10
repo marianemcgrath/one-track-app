@@ -106,7 +106,12 @@ async function sendMessage() {
         setLoading(false);
 
         if (!response.ok) {
-            throw new Error(data.error || "AI request failed");
+
+            throw new Error(
+                typeof data.error === "string"
+                    ? data.error
+                    : JSON.stringify(data.error)
+            );
         }
 
         appendMessage("ai", data.reply);
