@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import onetrack_dao as dao
+from onetrack_database import get_db_connection
 
 app = Flask(__name__)
 CORS(app)
@@ -117,6 +118,30 @@ def delete_reward(reward_id):
     if "error" in result:
         return jsonify(result), 404
     return jsonify(result), 200
+
+@app.route("/api/reward", methods=["GET"])
+def get_rewards():
+
+    habit_id = request.args.get("habit_id")
+
+    if not habit_id:
+        return jsonify({"error": "habit_id is required"}), 400
+
+    con = get_db_connection()
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT id, title, days_target, claimed
+        FROM rewards
+        WHERE habit_id = ?
+        ORDER BY days_target ASC
+    """, (habit_id,))
+
+    rewards = [dict(row) for row in cur.fetchall()]
+
+    con.close()
+
+    return jsonify(rewards)
 
 # Milestone endpoints
 

@@ -2,6 +2,10 @@ import sqlite3
 
 DB = "onetrack.db"
 
+def get_db_connection():
+    con = sqlite3.connect(DB)
+    con.row_factory = sqlite3.Row
+    return con
 
 def create_tables():
     con = sqlite3.connect(DB)
