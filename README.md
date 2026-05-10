@@ -266,7 +266,7 @@ The main page. Handles two states: a habit creation form when no habit is active
 Dedicated rewards management page.
 
 #### `support.html`
-AI support chat interface, powered by the Claude API.
+Intelligent support chat interface.
 
 #### `static/js/app.js`
 All AJAX functions — one per API endpoint. Each function handles the fetch call, sets headers, checks the response status, and throws meaningful errors. This file has no DOM logic; it is purely the API communication layer.

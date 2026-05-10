@@ -42,12 +42,12 @@ function showActiveHabit(habit) {
     hide("no-habit-section");
     show("active-habit-section");
 
-    document.getElementById("habit-name-display").textContent = habit.name;
-    document.getElementById("habit-reason-display").textContent = habit.reason || "";
+    document.getElementById("habit-name-display").textContent = habitContext.name;
+    document.getElementById("habit-reason-display").textContent = habitContext.reason || "";
 
-    const daysElapsed = calcDaysElapsed(habit.start_date);
+    const daysElapsed = calcDaysElapsed(habitContext.start_date);
     const daysRemaining = Math.max(0, 28 - daysElapsed);
-    const moneySaved = (daysElapsed * habit.cost_per_day).toFixed(2);
+    const moneySaved = (daysElapsed * habitContext.cost_per_day).toFixed(2);
     const progress = Math.min(100, (daysElapsed / 28) * 100);
 
     document.getElementById("days-elapsed").textContent = daysElapsed;
@@ -56,12 +56,12 @@ function showActiveHabit(habit) {
     document.getElementById("progress-bar").style.width = `${progress}%`;
 
     // Pre-fill edit form
-    document.getElementById("edit-habit-name").value = habit.name;
-    document.getElementById("edit-habit-cost").value = habit.cost_per_day;
-    document.getElementById("edit-habit-reason").value = habit.reason || "";
+    document.getElementById("edit-habit-name").value = habitContext.name;
+    document.getElementById("edit-habit-cost").value = habitContext.cost_per_day;
+    document.getElementById("edit-habit-reason").value = habitContext.reason || "";
 
-    renderMilestones(habit.milestones || []);
-    renderRewards(habit.rewards || []);
+    renderMilestones(habitContext.milestones || []);
+    renderRewards(habitContext.rewards || []);
 }
 
 function calcDaysElapsed(startDate) {

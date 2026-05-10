@@ -120,22 +120,35 @@ def delete_reward(reward_id):
 
 # Milestone endpoints
 
-# ai endpoint (placeholder)
-
-@app.route('/api/support', methods=['POST'])
-def ai():
+@app.route('/api/milestone', methods=['POST'])
+def add_milestone():
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data provided"}), 400
-    
-    message = data.get("message", "").strip()
-    
-    if not message:
-        return jsonify({"error": "Message is required"}), 400
-    
-    # ai functionality would be implemented here
-    
-    return jsonify({"reply": "ai response placeholder"}), 200
+
+    result = dao.add_milestone(
+        habit_id=data['habit_id'],
+        description=data['label'],
+        days_target=data['days_target']
+    )
+    if "error" in result:
+        return jsonify(result), 400
+    return jsonify({"status": "created", "milestone": result}), 201
+
+@app.route('/api/milestone', methods=['GET'])
+def get_milestones():
+    habit_id = request.args.get('habit_id')
+    if not habit_id:
+        return jsonify({"error": "habit_id is required"}), 400
+    milestones = dao.get_milestones(habit_id)
+    return jsonify({"milestones": milestones})
+
+@app.route('/api/milestone/<int:milestone_id>', methods=['DELETE'])
+def delete_milestone(milestone_id):
+    result = dao.delete_milestone(milestone_id)
+    if "error" in result:
+        return jsonify(result), 404
+    return jsonify(result), 200
 
 # Run
 if __name__ == '__main__':

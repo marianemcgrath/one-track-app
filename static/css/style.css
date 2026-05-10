@@ -7,6 +7,9 @@
   --gold-soft: #E6C76B;
   --white: #FFFFFF;
   --grey: #2A2A2A;
+  --success: #4CAF50;
+  --warning: #ff9800;
+  --danger: #e05555;
 }
 
 /* Reset */
@@ -40,7 +43,7 @@ body {
 }
 
 .logo_design {
-  width: 140px;
+  width: 220px;  /* Increased from 180px for bigger logo */
   height: auto;
   display: block;
   margin: 0 auto 16px auto;
@@ -148,9 +151,203 @@ nav a.active {
   background: var(--gold-soft);
 }
 
+/* Milestone Setup Section */
+.milestone-setup {
+  background: var(--dark);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.milestone-setup label {
+  display: block;
+  font-size: 13px;
+  color: var(--gold-soft);
+  margin-bottom: 8px;
+  margin-top: 12px;
+}
+
+.milestone-setup label:first-of-type {
+  margin-top: 0;
+}
+
+.milestone-dropdown {
+  background: var(--grey);
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: var(--white);
+  padding: 12px;
+  font-size: 14px;
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.milestone-dropdown:hover {
+  border-color: var(--gold);
+}
+
+.milestone-dropdown:focus {
+  border-color: var(--gold);
+}
+
+.reward-input {
+  background: var(--grey);
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: var(--white);
+  padding: 12px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.reward-input:focus {
+  border-color: var(--gold);
+}
+
+.reward-input::placeholder {
+  color: #666;
+}
+
+/* Message styles */
+.message {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  display: none;
+}
+
+.message.show {
+  display: block;
+}
+
+.message.success {
+  background: rgba(76, 175, 80, 0.2);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.message.error {
+  background: rgba(224, 85, 85, 0.2);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+/* Milestones List */
+.milestones-list {
+  margin-top: 20px;
+}
+
+.milestones-list h3 {
+  font-size: 13px;
+  color: var(--gold-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.milestones-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.milestone-card {
+  background: var(--grey);
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  padding: 14px;
+  transition: all 0.3s ease;
+}
+
+.milestone-card.achieved {
+  border: 2px solid var(--success);
+  background: rgba(76, 175, 80, 0.1);
+  animation: pulse 0.5s ease;
+}
+
+.milestone-card.claimed {
+  opacity: 0.6;
+  background: rgba(42, 42, 42, 0.5);
+}
+
+.milestone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.milestone-week {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.milestone-days {
+  font-size: 11px;
+  color: #888;
+}
+
+.milestone-reward {
+  font-size: 14px;
+  margin: 8px 0;
+  color: var(--white);
+}
+
+.milestone-status {
+  margin-top: 8px;
+}
+
+.claim-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--warning);
+  border: none;
+  border-radius: 6px;
+  color: var(--black);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.claim-btn:hover {
+  background: #f57c00;
+  transform: translateY(-1px);
+}
+
+.pending {
+  display: block;
+  text-align: center;
+  padding: 6px;
+  color: #888;
+  font-size: 12px;
+}
+
+.no-milestones {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+  font-size: 13px;
+  font-style: italic;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
 /* Subtle Glow Effect */
 .square.completed,
-.primary-btn {
+.primary-btn,
+.claim-btn {
   box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
 }
 
@@ -386,7 +583,6 @@ textarea {
 
 /* Desktop layout */
 @media (min-width: 768px) {
-
   body {
     padding: 0;
     align-items: flex-start;
@@ -418,7 +614,7 @@ textarea {
   }
 
   .logo_design {
-    width: 48px;
+    width: 120px;  /* Bigger desktop logo (was 100px, now 120px) */
     margin: 0;
   }
 
@@ -483,5 +679,10 @@ textarea {
   /* Loading msg spans full width */
   #loading-msg {
     grid-column: 1 / -1;
+  }
+  
+  /* Milestone setup on desktop */
+  .milestone-setup {
+    margin-bottom: 20px;
   }
 }

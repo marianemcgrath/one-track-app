@@ -1,10 +1,8 @@
 // OneTrack — support.js
-// Support chat
 
 const USER_ID = 1;
 
 let habitContext = null;
-let conversationHistory = [];
 
 // Initialise
 
@@ -88,58 +86,63 @@ async function sendMessage() {
 
     setLoading(true);
 
-    conversationHistory.push({
-        role: "user",
-        content: text
-    });
+    setTimeout(() => {
 
-    try {
+    const reply = generateSupportReply(text);
 
-        const response = await fetch(`/api/support`, {
+    appendMessage("ai", reply);
 
-            method: "POST",
+    setLoading(false);
 
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                message: text
-            })
-        });
-
-        const data = await response.json();
-
-        setLoading(false);
-
-        if (!response.ok) {
-
-            throw new Error(
-                typeof data.error === "string"
-                    ? data.error
-                    : JSON.stringify(data.error)
-            );
-        }
-
-        appendMessage("ai", data.reply);
-
-        conversationHistory.push({
-            role: "ai",
-            content: data.reply
-        });
-
-    } catch (err) {
-
-        setLoading(false);
-
-        console.error("FULL ERROR:", err);
-
-        appendMessage(
-            "ai",
-            "Sorry, I couldn't process your request. Please try again."
-        );
-    }
+}, 700);
 }
+
+function generateSupportReply(message) {
+
+    const text = message.toLowerCase();
+
+    const daysElapsed =
+        calcDaysElapsed(habitContext.start_date);
+
+    const moneySaved =
+        (daysElapsed * habitContext.cost_per_day).toFixed(2);
+
+    if (text.includes("motivate")) {
+
+        return `You're already ${daysElapsed} days into your journey — that's real progress. Every craving you resist is proof you're changing your life for the better 💛`;
+    }
+
+    if (text.includes("craving")) {
+
+        return `Cravings usually peak and fade within a few minutes. Try distracting yourself briefly, drinking water, or taking a short walk. You've already come too far to reset now.`;
+    }
+
+    if (text.includes("stats")) {
+
+        return `You've been smoke-free for ${daysElapsed} days and already saved €${moneySaved}. That's meaningful progress — both physically and financially.`;
+    }
+
+    if (text.includes("stress")) {
+
+        return `Stress can make old habits feel comforting, but your brain is learning healthier coping patterns now. Progress isn't about perfection — it's about continuing.`;
+    }
+
+    if (text.includes("relapse")) {
+
+    return `One setback does not erase your progress. Recovery is messy sometimes, but what matters most is getting back on track instead of giving up entirely.`;
+    }
+
+    if (text.includes("anxious")) {
+
+        return `Anxiety can feel intense during habit change because your brain is adjusting. Try slowing things down for a few minutes and focus only on getting through today, not forever.`;
+    }
+
+    if (text.includes("body")) {
+
+        return `Your body is already recovering from ${habitContext.name.toLowerCase()}. Circulation, lung function, sleep, and energy levels can all gradually improve over time.`;
+    }
+        return `You're doing better than you think. Recovery isn't linear, but every day away from ${habitContext.name.toLowerCase()} is a win worth recognising 💛`;
+    }
 
 // Message rendering
 
@@ -176,7 +179,7 @@ function setLoading(isLoading) {
 
         thinking.id = "thinking-msg";
 
-        thinking.textContent = "Thinking...";
+        thinking.textContent = "OneTrack Coach is typing...";
 
         document.getElementById("chat-window")
             .appendChild(thinking);
