@@ -42,34 +42,37 @@ function showActiveHabit(habit) {
     hide("no-habit-section");
     show("active-habit-section");
 
-    document.getElementById("habit-name-display").textContent = habitContext.name;
-    document.getElementById("habit-reason-display").textContent = habitContext.reason || "";
+    document.getElementById("habit-name-display").textContent = habit.name;
+    document.getElementById("habit-reason-display").textContent = habit.reason || "";
 
-    const daysElapsed = calcDaysElapsed(habitContext.start_date);
+    const daysElapsed = getDaysElapsed(habit.start_date);
     const daysRemaining = Math.max(0, 28 - daysElapsed);
-    const moneySaved = (daysElapsed * habitContext.cost_per_day).toFixed(2);
+    const moneySaved = (daysElapsed * habit.cost_per_day).toFixed(2);
     const progress = Math.min(100, (daysElapsed / 28) * 100);
+    const stats = getHabitStats(habit);
 
-    document.getElementById("days-elapsed").textContent = daysElapsed;
-    document.getElementById("days-remaining").textContent = daysRemaining;
-    document.getElementById("money-saved").textContent = `€${moneySaved}`;
-    document.getElementById("progress-bar").style.width = `${progress}%`;
+    document.getElementById("days-elapsed").textContent = stats.daysElapsed;
+    document.getElementById("days-remaining").textContent = stats.daysRemaining;
+    document.getElementById("money-saved").textContent = `€${stats.moneySaved}`;
+    document.getElementById("progress-bar").style.width = `${stats.progress}%`;
 
+    
     // Pre-fill edit form
-    document.getElementById("edit-habit-name").value = habitContext.name;
-    document.getElementById("edit-habit-cost").value = habitContext.cost_per_day;
-    document.getElementById("edit-habit-reason").value = habitContext.reason || "";
+    document.getElementById("edit-habit-name").value = habit.name;
+    document.getElementById("edit-habit-cost").value = habit.cost_per_day;
+    document.getElementById("edit-habit-reason").value = habit.reason || "";
 
-    renderMilestones(habitContext.milestones || []);
-    renderRewards(habitContext.rewards || []);
+    renderMilestones(habit.milestones || []);
+    renderRewards(habit.rewards || []);
 }
 
-function calcDaysElapsed(startDate) {
-    const start = new Date(startDate);
-    const today = new Date();
-    const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
-    return Math.max(0, diff);
-}
+    function getDaysElapsed(startDate) {
+        const start = new Date(startDate);
+        const now = new Date();
+
+        const diffTime = now - start;
+        return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    }
 
 // Milestones
 
