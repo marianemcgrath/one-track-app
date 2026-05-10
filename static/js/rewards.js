@@ -1,4 +1,4 @@
-// DOM logic for rewards.html
+// Rewards.html
 
 const USER_ID = 1;
 let currentHabit = null;
@@ -33,20 +33,44 @@ async function loadRewardsPage() {
 
 // Habit summary
 
+function getHabitStats(habit) {
+
+    const daysElapsed = getDaysElapsed(habit.start_date);
+
+    return {
+        daysElapsed,
+        daysRemaining: Math.max(0, 28 - daysElapsed),
+        moneySaved: (daysElapsed * habit.cost_per_day).toFixed(2),
+        progress: Math.min(100, (daysElapsed / 28) * 100)
+    };
+}
+
 function renderHabitSummary(habit) {
-    const daysElapsed = calcDaysElapsed(habit.start_date);
-    const daysRemaining = Math.max(0, 28 - daysElapsed);
-    const moneySaved = (daysElapsed * habit.cost_per_day).toFixed(2);
-    const progress = Math.min(100, (daysElapsed / 28) * 100);
+
+    const stats = getHabitStats(habit);
 
     document.getElementById("summary-habit-name").textContent = habit.name;
-    document.getElementById("summary-habit-reason").textContent = habit.reason || "";
-    document.getElementById("summary-day-label").textContent = `Day ${daysElapsed} of 28`;
-    document.getElementById("summary-pct").textContent = `${Math.round(progress)}%`;
-    document.getElementById("summary-progress-bar").style.width = `${progress}%`;
-    document.getElementById("summary-days").textContent = daysElapsed;
-    document.getElementById("summary-remaining").textContent = daysRemaining;
-    document.getElementById("summary-saved").textContent = `€${moneySaved}`;
+
+    document.getElementById("summary-habit-reason").textContent =
+        habit.reason || "";
+
+    document.getElementById("summary-day-label").textContent =
+        `Day ${stats.daysElapsed} of 28`;
+
+    document.getElementById("summary-pct").textContent =
+        `${Math.round(stats.progress)}%`;
+
+    document.getElementById("summary-progress-bar").style.width =
+        `${stats.progress}%`;
+
+    document.getElementById("summary-days").textContent =
+        stats.daysElapsed;
+
+    document.getElementById("summary-remaining").textContent =
+        stats.daysRemaining;
+
+    document.getElementById("summary-saved").textContent =
+        `€${stats.moneySaved}`;
 }
 
 // Rewards list
@@ -125,13 +149,6 @@ async function handleDeleteReward(rewardId) {
 
 
 // Helpers
-
-function calcDaysElapsed(startDate) {
-    const start = new Date(startDate);
-    const today = new Date();
-    const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
-    return Math.max(0, diff);
-}
 
 function show(id) {
     document.getElementById(id).style.display = "";

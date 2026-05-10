@@ -16,7 +16,7 @@ def get_connection():
     return con
 
 
-# ── User functions ───────────────────────────────────────────────────────────
+# User functions
 
 def add_user(username, email, password):
     if not username:
@@ -46,7 +46,7 @@ def add_user(username, email, password):
     }
 
 
-# ── Habit functions ──────────────────────────────────────────────────────────
+#  Habit functions
 
 def can_add_new_habit(user_id):
     con = get_connection()
@@ -183,7 +183,7 @@ def delete_habit(habit_id):
     return {"status": "deleted", "id": habit_id}
 
 
-# ── Reward functions ─────────────────────────────────────────────────────────
+# Reward functions
 
 def add_reward(habit_id, title, days_target):
     if not title:
@@ -260,7 +260,7 @@ def delete_reward(reward_id):
     return {"status": "deleted", "id": reward_id}
 
 
-# ── Milestone functions ──────────────────────────────────────────────────────
+# Milestone functions
 
 def add_milestone(habit_id, days_required, label):
     if not label:

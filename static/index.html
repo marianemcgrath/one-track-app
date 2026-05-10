@@ -1,144 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OneTrack</title>
+
     <link rel="stylesheet" href="static/css/style.css">
 </head>
+
 <body>
-  <div class="app">
 
-<header>
-    <div class="header">
-        <img src="images/onetrack_logo.png" alt="OneTrack" class="logo_design">
-        <p class="tagline">One Habit. On Track.</p>
+    <div class="app">
+
+        <header>
+
+            <div class="header">
+                <img
+                    src="images/onetrack_logo.png"
+                    alt="OneTrack"
+                    class="logo_design"
+                >
+
+                <p class="tagline">One Habit. On Track.</p>
+            </div>
+
+            <nav>
+                <a href="index.html" class="active">Dashboard</a>
+                <a href="rewards.html">Rewards</a>
+                <a href="support.html">OneTrack Coach</a>
+            </nav>
+
+        </header>
+
+        <main>
+
+            <!-- Loading State -->
+
+            <div id="loading-msg" class="loading-state">
+                Loading...
+            </div>
+
+            <!-- State A: No active habit -->
+
+            <section id="no-habit-section" style="display:none;">
+
+                <h2>Start Your Journey</h2>
+
+                <form id="add-habit-form">
+
+                    <label for="habit-name">
+                        What habit are you breaking?
+                    </label>
+
+                    <select id="habit-name" required>
+
+                        <option value="" disabled selected>
+                            Select a habit...
+                        </option>
+
+                        <option value="Smoking">Smoking</option>
+
+                        <option value="Drinking alcohol">
+                            Drinking alcohol
+                        </option>
+
+                        <option value="Vaping">Vaping</option>
+
+                        <option value="Excessive phone / social media use">
+                            Excessive phone / social media use
+                        </option>
+
+                        <option value="Junk food / snacking">
+                            Junk food / snacking
+                        </option>
+
+                        <option value="Gambling">Gambling</option>
+
+                        <option value="Procrastination">
+                            Procrastination
+                        </option>
+
+                        <option value="Late-night screen time">
+                            Late-night screen time
+                        </option>
+
+                        <option value="Nail biting">
+                            Nail biting
+                        </option>
+
+                        <option value="Stress eating">
+                            Stress eating
+                        </option>
+
+                        <option value="Other">
+                            Other (specify below)
+                        </option>
+
+                    </select>
+
+                    <!-- Custom habit input -->
+
+                    <input
+                        type="text"
+                        id="habit-name-other"
+                        placeholder="Describe your habit"
+                        maxlength="50"
+                        style="display:none;"
+                    >
+
+                    <label for="habit-cost">
+                        Daily cost (€)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="habit-cost"
+                        placeholder="e.g. 12"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                    <label for="habit-reason">
+                        Why are you doing this?
+                    </label>
+
+                    <textarea
+                        id="habit-reason"
+                        placeholder="Your reason (optional)"
+                        maxlength="250"
+                    ></textarea>
+
+                    <button type="submit">
+                        Start Tracking
+                    </button>
+
+                </form>
+
+                <p
+                    id="add-habit-error"
+                    class="error-msg"
+                    style="display:none;"
+                ></p>
+
+            </section>
+
+            <!-- State B: Active habit -->
+
+            <section id="active-habit-section" style="display:none;">
+
+                <header id="habit-header">
+
+                    <h2 id="habit-name-display"></h2>
+
+                    <div class="habit-actions">
+                        <button id="edit-habit-btn">
+                            Edit
+                        </button>
+
+                        <button
+                            id="delete-habit-btn"
+                            class="btn-danger"
+                        >
+                            Delete
+                        </button>
+                    </div>
+
+                </header>
+
+                <p
+                    id="habit-reason-display"
+                    class="habit-reason"
+                ></p>
+
+                <!-- Stats -->
+
+                <div id="stats-row">
+
+                    <div class="stat-card">
+                        <span
+                            class="stat-value"
+                            id="days-elapsed"
+                        >
+                            0
+                        </span>
+
+                        <span class="stat-label">
+                            Days
+                        </span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span
+                            class="stat-value"
+                            id="days-remaining"
+                        >
+                            28
+                        </span>
+
+                        <span class="stat-label">
+                            Days left
+                        </span>
+                    </div>
+
+                    <div class="stat-card">
+                        <span
+                            class="stat-value"
+                            id="money-saved"
+                        >
+                            €0
+                        </span>
+
+                        <span class="stat-label">
+                            Saved
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- Progress -->
+
+                <div id="progress-bar-wrap">
+
+                    <div
+                        id="progress-bar"
+                        role="progressbar"
+                    ></div>
+
+                </div>
+
+                <!-- Milestones -->
+
+                <div id="milestones-section">
+
+                    <h3>Milestones</h3>
+
+                    <ul id="milestones-list"></ul>
+
+                    <form id="add-milestone-form">
+
+                        <input
+                            type="number"
+                            id="milestone-days"
+                            placeholder="Days required"
+                            min="1"
+                            required
+                        >
+
+                        <input
+                            type="text"
+                            id="milestone-label"
+                            placeholder="Label e.g. One week done!"
+                            maxlength="60"
+                            required
+                        >
+
+                        <button type="submit">
+                            Add Milestone
+                        </button>
+
+                    </form>
+
+                    <p
+                        id="milestone-error"
+                        class="error-msg"
+                        style="display:none;"
+                    ></p>
+
+                </div>
+
+                <!-- Rewards -->
+
+                <div id="rewards-section">
+
+                    <h3>Rewards</h3>
+
+                    <ul id="rewards-list"></ul>
+
+                    <form id="add-reward-form">
+
+                        <input
+                            type="text"
+                            id="reward-title"
+                            placeholder="Reward e.g. New runners"
+                            maxlength="60"
+                            required
+                        >
+
+                        <input
+                            type="number"
+                            id="reward-days"
+                            placeholder="Unlock at day"
+                            min="1"
+                            required
+                        >
+
+                        <button type="submit">
+                            Add Reward
+                        </button>
+
+                    </form>
+
+                    <p
+                        id="reward-error"
+                        class="error-msg"
+                        style="display:none;"
+                    ></p>
+
+                </div>
+
+                <!-- Edit Habit -->
+
+                <div
+                    id="edit-habit-section"
+                    style="display:none;"
+                >
+
+                    <h3>Edit Habit</h3>
+
+                    <form id="edit-habit-form">
+
+                        <input
+                            type="text"
+                            id="edit-habit-name"
+                            placeholder="Habit name"
+                            maxlength="50"
+                            required
+                        >
+
+                        <input
+                            type="number"
+                            id="edit-habit-cost"
+                            placeholder="Daily cost (€)"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                        <textarea
+                            id="edit-habit-reason"
+                            placeholder="Your reason"
+                            maxlength="250"
+                        ></textarea>
+
+                        <button type="submit">
+                            Save Changes
+                        </button>
+
+                        <button
+                            type="button"
+                            id="cancel-edit-btn"
+                        >
+                            Cancel
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+        </main>
+
     </div>
-    <nav>
-        <a href="index.html" class="active">Dashboard</a>
-        <a href="rewards.html">Rewards</a>
-        <a href="support.html">OneTrack Coach</a>
-    </nav>
-</header>
 
-        <!-- State A: No active habit -->
-
-        <section id="no-habit-section" style="display:none;">
-            <h2>Start Your Journey</h2>
-            <form id="add-habit-form">
-                <label for="habit-name">What habit are you breaking?</label>
-                <select id="habit-name" required>
-                    <option value="" disabled selected>Select a habit...</option>
-                    <option value="Smoking">Smoking</option>
-                    <option value="Drinking alcohol">Drinking alcohol</option>
-                    <option value="Vaping">Vaping</option>
-                    <option value="Excessive phone / social media use">Excessive phone / social media use</option>
-                    <option value="Junk food / snacking">Junk food / snacking</option>
-                    <option value="Gambling">Gambling</option>
-                    <option value="Procrastination">Procrastination</option>
-                    <option value="Late-night screen time">Late-night screen time</option>
-                    <option value="Nail biting">Nail biting</option>
-                    <option value="Stress eating">Stress eating</option>
-                    <option value="Other">Other (specify below)</option>
-        </select>
-
-        <!-- shown only if Other is selected -->
-
-        <input type="text" id="habit-name-other" placeholder="Describe your habit" style="display:none;">
-
-                <label for="habit-cost">Daily cost (€)</label>
-                <input type="number" id="habit-cost" placeholder="e.g. 12" min="0" step="0.01" required>
-
-                <label for="habit-reason">Why are you doing this?</label>
-                <textarea id="habit-reason" placeholder="Your reason (optional)"></textarea>
-
-                <button type="submit">Start Tracking</button>
-            </form>
-            <p id="add-habit-error" class="error-msg" style="display:none;"></p>
-        </section>
-
-        <!-- State B: Active habit -->
-
-        <section id="active-habit-section" style="display:none;">
-
-            <div id="habit-header">
-                <h2 id="habit-name-display"></h2>
-                <div class="habit-actions">
-                    <button id="edit-habit-btn">Edit</button>
-                    <button id="delete-habit-btn" class="btn-danger">Delete</button>
-                </div>
-            </div>
-
-            <p id="habit-reason-display" class="habit-reason"></p>
-
-            <!-- Stats -->
-            <div id="stats-row">
-                <div class="stat-card">
-                    <span class="stat-value" id="days-elapsed">0</span>
-                    <span class="stat-label">Days</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value" id="days-remaining">28</span>
-                    <span class="stat-label">Days left</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value" id="money-saved">€0</span>
-                    <span class="stat-label">Saved</span>
-                </div>
-            </div>
-
-            <!-- Progress bar -->
-            <div id="progress-bar-wrap">
-                <div id="progress-bar"></div>
-            </div>
-
-            <!-- Milestones -->
-            <div id="milestones-section">
-                <h3>Milestones</h3>
-                <ul id="milestones-list"></ul>
-                <form id="add-milestone-form">
-                    <input type="number" id="milestone-days" placeholder="Days required" min="1" required>
-                    <input type="text" id="milestone-label" placeholder="Label e.g. One week done!" required>
-                    <button type="submit">Add Milestone</button>
-                </form>
-                <p id="milestone-error" class="error-msg" style="display:none;"></p>
-            </div>
-
-            <!-- Rewards -->
-            <div id="rewards-section">
-                <h3>Rewards</h3>
-                <ul id="rewards-list"></ul>
-                <form id="add-reward-form">
-                    <input type="text" id="reward-title" placeholder="Reward e.g. New runners" required>
-                    <input type="number" id="reward-days" placeholder="Unlock at day" min="1" required>
-                    <button type="submit">Add Reward</button>
-                </form>
-                <p id="reward-error" class="error-msg" style="display:none;"></p>
-            </div>
-
-            <!-- Edit habit form (hidden until Edit clicked) -->
-            <div id="edit-habit-section" style="display:none;">
-                <h3>Edit Habit</h3>
-                <form id="edit-habit-form">
-                    <input type="text" id="edit-habit-name" placeholder="Habit name" required>
-                    <input type="number" id="edit-habit-cost" placeholder="Daily cost (€)" min="0" step="0.01" required>
-                    <textarea id="edit-habit-reason" placeholder="Your reason"></textarea>
-                    <button type="submit">Save Changes</button>
-                    <button type="button" id="cancel-edit-btn">Cancel</button>
-                </form>
-            </div>
-
-        </section>
-
-        <!-- Loading state -->
-        <p id="loading-msg">Loading...</p>
-
-    </main>
-
-  </div>
-
-  <script src="js/app.js"></script>
-  <script src="js/dashboard.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
 
 </body>
+
 </html>
