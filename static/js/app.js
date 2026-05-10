@@ -186,7 +186,7 @@ async function loadMilestones() {
 
     try {
         const response = await fetch(
-            `${API_BASE}/api/rewards?habit_id=${habit.id}`
+            `${API_BASE}/api/reward?habit_id=${habit.id}`
         );
 
         const milestones = await response.json();
