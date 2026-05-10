@@ -1,9 +1,20 @@
 // AJAX calls to the Flask API
-
 const API_BASE = "https://mariRmcgrath.pythonanywhere.com";
 
-//User functions
 
+// User ID management
+let USER_ID = null;
+let sessionReady = initSession();  // Start loading session
+
+async function initSession() {
+    const res = await fetch(`${API_BASE}/api/session`);
+    const data = await res.json();
+    USER_ID = data.user_id;
+    console.log('Session ready, USER_ID:', USER_ID);
+    return USER_ID;
+}
+
+// User functions
 async function addUser(username, email, password) {
   try {
     const res = await fetch(`${API_BASE}/api/user`, {
@@ -20,8 +31,7 @@ async function addUser(username, email, password) {
   }
 }
 
-//Habit functions
-
+// Habit functions
 async function getActiveHabit(userId) {
   try {
     const res = await fetch(`${API_BASE}/api/habit?user_id=${userId}`);
@@ -30,7 +40,7 @@ async function getActiveHabit(userId) {
     return data.habit; // null if none active
   } catch (err) {
     console.error("getActiveHabit:", err.message);
-    throw err;
+    return null; // Return null instead of throwing
   }
 }
 
@@ -61,7 +71,7 @@ async function updateHabit(habitId, fields = {}) {
     const res = await fetch(`${API_BASE}/api/habit/${habitId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(fields) // only what changed: { name, cost_per_day, reason }
+      body: JSON.stringify(fields)
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Failed to update habit");
@@ -86,8 +96,7 @@ async function deleteHabit(habitId) {
   }
 }
 
-//Reward functions
-
+// Reward functions
 async function addReward(habitId, title, daysTarget) {
   try {
     const res = await fetch(`${API_BASE}/api/reward`, {
@@ -136,174 +145,136 @@ async function deleteReward(rewardId) {
   }
 }
 
-
-// Milestone functions
-
-async function addMilestone() {
-    const weekSelect = document.getElementById('milestone-week');
-    const daysTarget = parseInt(weekSelect.value);
-
-    const rewardInput = document.getElementById('reward-prize');
-    const title = rewardInput.value.trim();
-
-    // Validation
-    if (!title) {
-        showMessage('Please enter a reward for your milestone!', 'error');
-        return;
-    }
-
-    // Get current habit
-    const habit = await getActiveHabit(USER_ID);
-
-    if (!habit) {
-        showMessage('Please create a habit first', 'error');
-        return;
-    }
-
-    // Map days to week display
-    const weekNumber = daysTarget / 7;
-    const weekText = weekNumber === 1 ? 'Week 1' : `Week ${weekNumber}`;
-
-    try {
-        await addReward(habit.id, title, daysTarget);
-
-        showMessage(`🎉 Milestone set: ${weekText} - ${title}`, 'success');
-
-        rewardInput.value = '';
-
-        loadMilestones();
-
-    } catch (error) {
-        console.error('Error setting milestone:', error);
-        showMessage(error.message, 'error');
-    }
+// Helper: Calculate days elapsed since start date
+function getDaysElapsed(startDate) {
+  const start = new Date(startDate);
+  const today = new Date();
+  const diffTime = Math.abs(today - start);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 }
 
+// Milestone functions
+async function addMilestone() {
+  const weekSelect = document.getElementById('milestone-week');
+  const daysTarget = parseInt(weekSelect.value);
+  const rewardInput = document.getElementById('reward-prize');
+  const title = rewardInput.value.trim();
+
+  if (!title) {
+    showMessage('Please enter a reward for your milestone!', 'error');
+    return;
+  }
+
+  const habit = await getActiveHabit(USER_ID);
+  if (!habit) {
+    showMessage('Please create a habit first', 'error');
+    return;
+  }
+
+  try {
+    await addReward(habit.id, title, daysTarget);
+    showMessage(`🎉 Milestone set: ${title} at ${daysTarget} days`, 'success');
+    rewardInput.value = '';
+    loadMilestones();
+  } catch (error) {
+    console.error('Error setting milestone:', error);
+    showMessage(error.message, 'error');
+  }
+}
+
+// Main loadMilestones function (only ONE definition)
 async function loadMilestones() {
-    const habit = await getActiveHabit(USER_ID);
+  const habit = await getActiveHabit(USER_ID);
+  if (!habit) return;
 
-    if (!habit) return;
+  const container = document.getElementById('milestones-container');
+  if (!container) {
+    console.warn('Milestones container not found on this page');
+    return;
+  }
 
-    try {
-        const response = await fetch(
-            `${API_BASE}/api/reward?habit_id=${habit.id}`
-        );
+  try {
+    const response = await fetch(`${API_BASE}/api/reward?habit_id=${habit.id}`);
+    const milestones = await response.json();
 
-        const milestones = await response.json();
+    // Sort by days target
+    milestones.sort((a, b) => a.days_target - b.days_target);
+    const currentDays = getDaysElapsed(habit.start_date);
 
-        const container = document.getElementById('milestones-container');
+    container.innerHTML = milestones.map(milestone => {
+      const weekNumber = milestone.days_target / 7;
+      const weekName = weekNumber === 1 ? 'Week 1' : `Week ${weekNumber}`;
+      const isClaimed = milestone.claimed === 1;
+      const isAchieved = currentDays >= milestone.days_target && !isClaimed;
 
-        if (!milestones || milestones.length === 0) {
-            container.innerHTML =
-                '<p class="no-milestones">No milestones set yet. Create your first milestone above!</p>';
-            return;
-        }
-
-        // Sort by days target
-        milestones.sort((a, b) => a.days_target - b.days_target);
-
-        const currentDays = getDaysElapsed(habit.start_date);
-
-        container.innerHTML = milestones.map(milestone => {
-
-            const weekNumber = milestone.days_target / 7;
-            const weekName = weekNumber === 1
-                ? 'Week 1'
-                : `Week ${weekNumber}`;
-
-            const isClaimed = milestone.claimed;
-
-            const isAchieved =
-                currentDays >= milestone.days_target && !isClaimed;
-
-            return `
-                <div class="milestone-card ${isClaimed ? 'claimed' : ''} ${isAchieved ? 'achieved' : ''}">
-                    
-                    <div class="milestone-header">
-                        <span class="milestone-week">${weekName}</span>
-                        <span class="milestone-days">
-                            (${milestone.days_target} days)
-                        </span>
-                    </div>
-
-                    <div class="milestone-reward">
-                        🎁 ${escapeHtml(milestone.title)}
-                    </div>
-
-                    <div class="milestone-status">
-                        ${
-                            isClaimed
-                                ? '✅ Claimed!'
-                                : (
-                                    isAchieved
-                                        ? `<button onclick="claimMilestone(${milestone.id})" class="claim-btn">
-                                            🎉 Claim Your Reward!
-                                           </button>`
-                                        : `<span class="pending">
-                                            🔒 Complete ${milestone.days_target} days to unlock
-                                           </span>`
-                                )
-                        }
-                    </div>
-
-                </div>
-            `;
-        }).join('');
-
-    } catch (error) {
-        console.error('Error loading milestones:', error);
-    }
+      return `
+        <div class="milestone-card ${isClaimed ? 'claimed' : ''} ${isAchieved ? 'achieved' : ''}">
+          <div class="milestone-header">
+            <span class="milestone-week">${weekName}</span>
+            <span class="milestone-days">(${milestone.days_target} days)</span>
+          </div>
+          <div class="milestone-reward">🎁 ${escapeHtml(milestone.title)}</div>
+          <div class="milestone-status">
+            ${
+              isClaimed
+                ? '✅ Claimed!'
+                : isAchieved
+                  ? `<button onclick="claimMilestone(${milestone.id})" class="claim-btn">🎉 Claim Your Reward!</button>`
+                  : `<span class="pending">🔒 Complete ${milestone.days_target} days to unlock</span>`
+            }
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Error loading milestones:', error);
+    const container = document.getElementById('milestones-container');
+    if (container) container.innerHTML = '<div class="error">Failed to load milestones</div>';
+  }
 }
 
 async function claimMilestone(rewardId) {
-
-    try {
-        await claimReward(rewardId);
-
-        showMessage(
-            '🎊 Congratulations! Enjoy your reward! 🎊',
-            'success'
-        );
-
-        loadMilestones();
-
-    } catch (error) {
-        console.error('Error claiming milestone:', error);
-        showMessage(error.message, 'error');
-    }
+  try {
+    await claimReward(rewardId);
+    showMessage('🎊 Congratulations! Enjoy your reward! 🎊', 'success');
+    loadMilestones();
+  } catch (error) {
+    console.error('Error claiming milestone:', error);
+    showMessage(error.message, 'error');
+  }
 }
 
 function showMessage(text, type) {
-
-    const messageDiv = document.getElementById('milestone-message');
-
-    messageDiv.textContent = text;
-    messageDiv.className = `message ${type}`;
-
-    setTimeout(() => {
-        messageDiv.textContent = '';
-        messageDiv.className = 'message';
-    }, 3000);
+  const messageDiv = document.getElementById('milestone-message');
+  if (!messageDiv) return;
+  messageDiv.textContent = text;
+  messageDiv.className = `message ${type}`;
+  setTimeout(() => {
+    messageDiv.textContent = '';
+    messageDiv.className = 'message';
+  }, 3000);
 }
 
 function escapeHtml(text) {
-
-    const div = document.createElement('div');
-
-    div.textContent = text;
-
-    return div.innerHTML;
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
-// Load events
-
-document.addEventListener('DOMContentLoaded', () => {
-
+// Load events - wait for session first
+document.addEventListener('DOMContentLoaded', async () => {
+    await sessionReady;  // CRITICAL: Wait for USER_ID to be set
+    
+    console.log('DOM ready, USER_ID =', USER_ID);  // Should show 1
+    
     const setBtn = document.getElementById('set-milestone-btn');
-
     if (setBtn) {
         setBtn.addEventListener('click', addMilestone);
     }
-
-    loadMilestones();
+    
+    // Load dashboard or milestones depending on page
+    if (document.getElementById('milestones-container')) {
+        loadMilestones();
+    }
 });

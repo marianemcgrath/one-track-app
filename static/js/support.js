@@ -6,13 +6,14 @@ let habitContext = null;
 
 // Initialise
 
-document.addEventListener("DOMContentLoaded", async () => {
-
-    await loadHabitContext();
-
-    setupInputAutoResize();
-
-    setupEnterToSend();
+document.addEventListener('DOMContentLoaded', async () => {
+    await sessionReady;  // Critical: wait for USER_ID
+    
+    const setBtn = document.getElementById('set-milestone-btn');
+    if (setBtn) {
+        setBtn.addEventListener('click', addMilestone);
+    }
+    loadMilestones();
 });
 
 // Load habit context

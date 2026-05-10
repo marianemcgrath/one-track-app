@@ -14,6 +14,11 @@ def index():
 def static_files(filename):
     return send_from_directory('static', filename)
 
+@app.route('/api/session', methods=['GET'])
+def get_session():
+    # For now, return demo user
+    return jsonify({"user_id": 1, "username": "demo_user"})
+
 
 # User endpoints
 

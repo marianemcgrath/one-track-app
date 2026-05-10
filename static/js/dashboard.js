@@ -1,35 +1,51 @@
 // OneTrack — Dashboard JavaScript
 
-const USER_ID = 1;
 let currentHabit = null;
 
 // Initialise
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    if (typeof sessionReady !== 'undefined') {
+        await sessionReady;
+    }
+    
     loadDashboard();
     wireAddHabitForm();
     wireEditHabit();
     wireAddMilestoneForm();
     wireAddRewardForm();
 
-    // Habit dropdown - show text input if Other is selected
-    document.getElementById("habit-name").addEventListener("change", function () {
-        const otherInput = document.getElementById("habit-name-other");
-        otherInput.style.display = this.value === "Other" ? "block" : "none";
-        if (this.value !== "Other") otherInput.value = "";
-    });
+    const habitSelect = document.getElementById("habit-name");
+    if (habitSelect) {
+        habitSelect.addEventListener("change", function () {
+            const otherInput = document.getElementById("habit-name-other");
+            if (otherInput) {
+                otherInput.style.display = this.value === "Other" ? "block" : "none";
+                if (this.value !== "Other") otherInput.value = "";
+            }
+        });
+    }
 });
 
 async function loadDashboard() {
-    try {const habit = await getActiveHabit(USER_ID);
-        if (habit) {
+    try {
+        if (typeof USER_ID === 'undefined' || !USER_ID) {
+            console.log('Waiting for USER_ID...');
+            setTimeout(loadDashboard, 100);
+            return;
+        }
+        
+        const habit = await getActiveHabit(USER_ID);
+        if (habit && habit.id) {
             currentHabit = habit;
-            showActiveHabit(habit);}
-            else {showNoHabit();}} 
-    catch (err) {showError("loading-msg", "Could not load dashboard. Is the server running?");}
+            showActiveHabit(habit);
+        } else {
+            showNoHabit();
+        }
+    } catch (err) {
+        console.error('loadDashboard error:', err);
+        showError("loading-msg", "Could not load dashboard. Is the server running?");
+    }
 }
-
-// State rendering
 
 function showNoHabit() {
     hide("loading-msg");
@@ -42,45 +58,62 @@ function showActiveHabit(habit) {
     hide("no-habit-section");
     show("active-habit-section");
 
-    document.getElementById("habit-name-display").textContent = habit.name;
-    document.getElementById("habit-reason-display").textContent = habit.reason || "";
+    const nameDisplay = document.getElementById("habit-name-display");
+    const reasonDisplay = document.getElementById("habit-reason-display");
+    if (nameDisplay) nameDisplay.textContent = habit.name;
+    if (reasonDisplay) reasonDisplay.textContent = habit.reason || "";
 
-    const daysElapsed = getDaysElapsed(habit.start_date);
+    const timeElapsed = getTimeElapsed(habit.start_date);
+    const daysElapsed = timeElapsed.days;
     const daysRemaining = Math.max(0, 28 - daysElapsed);
     const moneySaved = (daysElapsed * habit.cost_per_day).toFixed(2);
     const progress = Math.min(100, (daysElapsed / 28) * 100);
-    const stats = getHabitStats(habit);
 
-    document.getElementById("days-elapsed").textContent = stats.daysElapsed;
-    document.getElementById("days-remaining").textContent = stats.daysRemaining;
-    document.getElementById("money-saved").textContent = `€${stats.moneySaved}`;
-    document.getElementById("progress-bar").style.width = `${stats.progress}%`;
+    const daysElapsedEl = document.getElementById("days-elapsed");
+    const daysRemainingEl = document.getElementById("days-remaining");
+    const moneySavedEl = document.getElementById("money-saved");
+    const progressBar = document.getElementById("progress-bar");
 
+    if (daysElapsedEl) daysElapsedEl.textContent = `${timeElapsed.days} days • ${timeElapsed.hours} hours • ${timeElapsed.minutes} minutes`;
+    if (daysRemainingEl) daysRemainingEl.textContent = daysRemaining;
+    if (moneySavedEl) moneySavedEl.textContent = `€${moneySaved}`;
+    if (progressBar) progressBar.style.width = `${progress}%`;
+
+    const editName = document.getElementById("edit-habit-name");
+    const editCost = document.getElementById("edit-habit-cost");
+    const editReason = document.getElementById("edit-habit-reason");
     
-    // Pre-fill edit form
-    document.getElementById("edit-habit-name").value = habit.name;
-    document.getElementById("edit-habit-cost").value = habit.cost_per_day;
-    document.getElementById("edit-habit-reason").value = habit.reason || "";
+    if (editName) editName.value = habit.name;
+    if (editCost) editCost.value = habit.cost_per_day;
+    if (editReason) editReason.value = habit.reason || "";
 
-    renderMilestones(habit.milestones || []);
-    renderRewards(habit.rewards || []);
+    if (habit.milestones) renderMilestones(habit.milestones);
+    if (habit.rewards) renderRewards(habit.rewards);
 }
 
-    function getDaysElapsed(startDate) {
-        const start = new Date(startDate);
-        const now = new Date();
+function getTimeElapsed(startDate) {
+    const start = new Date(startDate);
+    const now = new Date();
+    const diffMs = now - start;
+    
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (86400000)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (3600000)) / (1000 * 60));
+    
+    return { days, hours, minutes };
+}
 
-        const diffTime = now - start;
-        return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    }
-
-// Milestones
+function getDaysElapsed(startDate) {
+    return getTimeElapsed(startDate).days;
+}
 
 function renderMilestones(milestones) {
     const list = document.getElementById("milestones-list");
+    if (!list) return;
+    
     list.innerHTML = "";
 
-    if (milestones.length === 0) {
+    if (!milestones || milestones.length === 0) {
         list.innerHTML = "<li class='empty-msg'>No milestones yet.</li>";
         return;
     }
@@ -89,7 +122,7 @@ function renderMilestones(milestones) {
         const li = document.createElement("li");
         li.className = m.achieved ? "achieved" : "";
         li.innerHTML = `
-            <span>${m.label} (day ${m.days_required})</span>
+            <span>${escapeHtml(m.label)} (day ${m.days_required})</span>
             <div class="item-actions">
                 ${!m.achieved
                     ? `<button onclick="handleAchieveMilestone(${m.id})">Achieve</button>`
@@ -101,15 +134,38 @@ function renderMilestones(milestones) {
     });
 }
 
+async function addMilestoneToHabit(habitId, label, daysRequired) {
+    try {
+        const res = await fetch(`${API_BASE}/api/milestone`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                habit_id: habitId,
+                label: label,
+                days_target: daysRequired
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to add milestone");
+        return data.milestone;
+    } catch (err) {
+        console.error("addMilestone:", err.message);
+        throw err;
+    }
+}
+
 function wireAddMilestoneForm() {
-    document.getElementById("add-milestone-form").addEventListener("submit", async (e) => {
+    const form = document.getElementById("add-milestone-form");
+    if (!form) return;
+    
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const daysRequired = parseInt(document.getElementById("milestone-days").value);
         const label = document.getElementById("milestone-label").value.trim();
 
         try {
-            await addMilestone(currentHabit.id, daysRequired, label);
-            document.getElementById("add-milestone-form").reset();
+            await addMilestoneToHabit(currentHabit.id, label, daysRequired);
+            form.reset();
             hide("milestone-error");
             await loadDashboard();
         } catch (err) {
@@ -127,13 +183,13 @@ async function handleAchieveMilestone(milestoneId) {
     }
 }
 
-// Rewards
-
 function renderRewards(rewards) {
     const list = document.getElementById("rewards-list");
+    if (!list) return;
+    
     list.innerHTML = "";
 
-    if (rewards.length === 0) {
+    if (!rewards || rewards.length === 0) {
         list.innerHTML = "<li class='empty-msg'>No rewards yet.</li>";
         return;
     }
@@ -142,7 +198,7 @@ function renderRewards(rewards) {
         const li = document.createElement("li");
         li.className = r.claimed ? "claimed" : "";
         li.innerHTML = `
-            <span>${r.title} (day ${r.days_target})</span>
+            <span>${escapeHtml(r.title)} (day ${r.days_target})</span>
             <div class="item-actions">
                 ${!r.claimed
                     ? `<button onclick="handleClaimReward(${r.id})">Claim</button>
@@ -156,14 +212,17 @@ function renderRewards(rewards) {
 }
 
 function wireAddRewardForm() {
-    document.getElementById("add-reward-form").addEventListener("submit", async (e) => {
+    const form = document.getElementById("add-reward-form");
+    if (!form) return;
+    
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const title = document.getElementById("reward-title").value.trim();
         const daysTarget = parseInt(document.getElementById("reward-days").value);
 
         try {
             await addReward(currentHabit.id, title, daysTarget);
-            document.getElementById("add-reward-form").reset();
+            form.reset();
             hide("reward-error");
             await loadDashboard();
         } catch (err) {
@@ -191,15 +250,22 @@ async function handleDeleteReward(rewardId) {
     }
 }
 
-// Add habit
-
 function wireAddHabitForm() {
-    document.getElementById("add-habit-form").addEventListener("submit", async (e) => {
+    const form = document.getElementById("add-habit-form");
+    if (!form) return;
+    
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById("habit-name").value.trim();
+        
+        let name = document.getElementById("habit-name").value.trim();
+        const otherName = document.getElementById("habit-name-other");
+        if (name === "Other" && otherName && otherName.value.trim()) {
+            name = otherName.value.trim();
+        }
+        
         const cost = parseFloat(document.getElementById("habit-cost").value);
         const reason = document.getElementById("habit-reason").value.trim();
-        const startDate = new Date().toISOString().split("T")[0]; // today
+        const startDate = new Date().toISOString().split("T")[0];
 
         try {
             await addHabit(USER_ID, name, startDate, cost, reason);
@@ -211,58 +277,68 @@ function wireAddHabitForm() {
     });
 }
 
-
-// Edit habit
-
 function wireEditHabit() {
-    document.getElementById("edit-habit-btn").addEventListener("click", () => {
-        show("edit-habit-section");
-    });
+    const editBtn = document.getElementById("edit-habit-btn");
+    const cancelBtn = document.getElementById("cancel-edit-btn");
+    const editForm = document.getElementById("edit-habit-form");
+    const deleteBtn = document.getElementById("delete-habit-btn");
+    
+    if (editBtn) {
+        editBtn.addEventListener("click", () => show("edit-habit-section"));
+    }
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", () => hide("edit-habit-section"));
+    }
+    if (editForm) {
+        editForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("edit-habit-name").value.trim();
+            const cost_per_day = parseFloat(document.getElementById("edit-habit-cost").value);
+            const reason = document.getElementById("edit-habit-reason").value.trim();
 
-    document.getElementById("cancel-edit-btn").addEventListener("click", () => {
-        hide("edit-habit-section");
-    });
-
-    document.getElementById("edit-habit-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const name = document.getElementById("edit-habit-name").value.trim();
-        const cost_per_day = parseFloat(document.getElementById("edit-habit-cost").value);
-        const reason = document.getElementById("edit-habit-reason").value.trim();
-
-        try {
-            await updateHabit(currentHabit.id, { name, cost_per_day, reason });
-            hide("edit-habit-section");
-            await loadDashboard();
-        } catch (err) {
-            alert(err.message);
-        }
-    });
-
-    document.getElementById("delete-habit-btn").addEventListener("click", async () => {
-        if (!confirm("Delete this habit? This cannot be undone.")) return;
-        try {
-            await deleteHabit(currentHabit.id);
-            currentHabit = null;
-            await loadDashboard();
-        } catch (err) {
-            alert(err.message);
-        }
-    });
+            try {
+                await updateHabit(currentHabit.id, { name, cost_per_day, reason });
+                hide("edit-habit-section");
+                await loadDashboard();
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+    }
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", async () => {
+            if (!confirm("Delete this habit? This cannot be undone.")) return;
+            try {
+                await deleteHabit(currentHabit.id);
+                currentHabit = null;
+                await loadDashboard();
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+    }
 }
 
-
-// Helpers
-
 function show(id) {
-    document.getElementById(id).style.display = "";
+    const el = document.getElementById(id);
+    if (el) el.style.display = "block";
 }
 
 function hide(id) {
-    document.getElementById(id).style.display = "none";
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
 }
 
 function showError(id, message) {
     const el = document.getElementById(id);
-    el.textContent = message;
-    el.style.display = "block";
+    if (el) {
+        el.textContent = message;
+        el.style.display = "block";
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
