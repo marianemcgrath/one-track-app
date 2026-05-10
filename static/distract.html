@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>OneTrack — Distraction Zone</title>
+
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <style>
+
+        .game-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: #1a1a1a;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .timer {
+            color: #d4af37;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background: #2d2d2d;
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.2s;
+        }
+
+        .card.flipped,
+        .card.matched {
+            background: #d4af37;
+            color: #1a1a1a;
+        }
+
+        .card.matched {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .reset-btn {
+            background: #d4af37;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .api-reward {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #2a2a2a;
+            border-radius: 12px;
+        }
+
+        .api-reward img {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="app">
+
+        <header>
+
+            <div class="header">
+
+                <img
+                    src="images/onetrack_logo.png"
+                    alt="OneTrack"
+                    class="logo_design"
+                >
+
+                <p class="tagline">
+                    One Habit. On Track.
+                </p>
+
+            </div>
+
+            <nav>
+
+                <a href="index.html">
+                    Dashboard
+                </a>
+
+                <a href="rewards.html">
+                    Rewards
+                </a>
+
+                <a href="support.html">
+                    Coach
+                </a>
+
+                <a
+                    href="distraction.html"
+                    class="active"
+                >
+                    🎮 Distract
+                </a>
+
+            </nav>
+
+        </header>
+
+        <main>
+
+            <section class="game-container">
+
+                <h1>
+                    🎮 Distraction Zone
+                </h1>
+
+                <div
+                    class="timer"
+                    id="timer"
+                >
+                    ⏰ Beat the game to ride out the craving
+                </div>
+
+                <div
+                    class="status"
+                    id="status"
+                >
+                    Matches: 0 / 8
+                </div>
+
+                <div
+                    class="card-grid"
+                    id="cardGrid"
+                ></div>
+
+                <button
+                    class="reset-btn"
+                    id="resetBtn"
+                >
+                    🔄 New Game
+                </button>
+
+                <section class="api-reward">
+
+                    <p>
+                        🏆
+                        <strong>
+                            Win to unlock a dog reward!
+                        </strong>
+                        🐕
+                    </p>
+
+                    <div id="dogImage"></div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="static/js/distraction.js"></script>
+
+</body>
+
+</html>

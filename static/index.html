@@ -26,9 +26,10 @@
             </div>
 
             <nav>
-                <a href="index.html" class="active">Dashboard</a>
-                <a href="rewards.html">Rewards</a>
-                <a href="support.html">OneTrack Coach</a>
+                <a href="/">Dashboard</a>
+                <a href="/rewards.html">Rewards</a>
+                <a href="/support.html">Coach</a>
+                <a href="/distraction.html" class="active">🎮 Distract</a>
             </nav>
 
         </header>
@@ -53,51 +54,30 @@
                         What habit are you breaking?
                     </label>
 
-                    <select id="habit-name" required>
-
-                        <option value="" disabled selected>
-                            Select a habit...
-                        </option>
-
-                        <option value="Smoking">Smoking</option>
-
-                        <option value="Drinking alcohol">
-                            Drinking alcohol
-                        </option>
-
-                        <option value="Vaping">Vaping</option>
-
-                        <option value="Excessive phone / social media use">
-                            Excessive phone / social media use
-                        </option>
-
-                        <option value="Junk food / snacking">
-                            Junk food / snacking
-                        </option>
-
-                        <option value="Gambling">Gambling</option>
-
-                        <option value="Procrastination">
-                            Procrastination
-                        </option>
-
-                        <option value="Late-night screen time">
-                            Late-night screen time
-                        </option>
-
-                        <option value="Nail biting">
-                            Nail biting
-                        </option>
-
-                        <option value="Stress eating">
-                            Stress eating
-                        </option>
-
-                        <option value="Other">
-                            Other (specify below)
-                        </option>
-
-                    </select>
+            <select id="habit-name" required>
+                <option value="" disabled selected>Select a habit...</option>
+                
+                <optgroup label="🔥 Most Quit (High Search Volume)">
+                    <option value="Vaping">🚬 Vaping — 87k monthly searches</option>
+                    <option value="Smoking">🚭 Smoking — 73k monthly searches</option>
+                    <option value="Drinking alcohol">🍺 Drinking alcohol — 40k monthly searches</option>
+                    <option value="Junk food / snacking">🍩 Junk food / snacking — 29k monthly searches</option>
+                </optgroup>
+                
+                <optgroup label="📱 Digital & Mental Habits">
+                    <option value="Excessive phone / social media use">📱 Excessive phone / social media use</option>
+                    <option value="Late-night screen time">🌙 Late-night screen time</option>
+                    <option value="Procrastination">⏰ Procrastination</option>
+                    <option value="Gambling">🎰 Gambling</option>
+                </optgroup>
+                
+                <optgroup label="💪 Physical & Body-Focused">
+                    <option value="Nail biting">💅 Nail biting</option>
+                    <option value="Stress eating">🍽️ Stress eating</option>
+                </optgroup>
+                
+                <option value="Other">📝 Other (specify below)</option>
+            </select>
 
                     <!-- Custom habit input -->
 
