@@ -130,8 +130,8 @@ def get_active_habit(user_id):
         ORDER BY days_target
     """, (habit["id"],)).fetchall()
 
-    habit["milestones"] = [dict(m) for m in milestones]
-    habit["rewards"] = [dict(r) for r in rewards]
+    #habit["milestones"] = [dict(m) for m in milestones]
+    #habit["rewards"] = [dict(r) for r in rewards]
 
     con.close()
 
