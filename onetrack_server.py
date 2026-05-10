@@ -159,7 +159,7 @@ def ai_support():
             },
 
             json={
-                "model": "claude-3-5-sonnet-20241022",
+                "model": "claude-3-haiku-20240307",
                 "max_tokens": 500,
                 "system": system_prompt,
                 "messages": [
