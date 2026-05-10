@@ -118,15 +118,14 @@ async function sendMessage() {
 
     } catch (err) {
 
-        setLoading(false);
+    setLoading(false);
 
-        appendMessage(
-            "ai",
-            "Sorry — AI support is temporarily unavailable right now. Please try again shortly."
-        );
+    console.error("FULL ERROR:", err);
 
-        console.error("AI Support error:", err);
-    }
+    appendMessage(
+        "ai",
+        `ERROR: ${err.message}`
+    );
 }
 
 // Build system prompt
@@ -285,4 +284,4 @@ function hide(id) {
     if (el) {
         el.style.display = "none";
     }
-}
+}}
