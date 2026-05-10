@@ -147,11 +147,11 @@ async function deleteReward(rewardId) {
 
 // Helper: Calculate days elapsed since start date
 function getDaysElapsed(startDate) {
-  const start = new Date(startDate);
-  const today = new Date();
-  const diffTime = Math.abs(today - start);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
+    const start = new Date(startDate);
+    const today = new Date();
+    const diffTime = today - start;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
 }
 
 // Milestone functions

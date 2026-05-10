@@ -49,12 +49,12 @@ def add_user(username, email, password):
 #  Habit functions
 
 def can_add_new_habit(user_id):
-    con = get_connection()
-    cur = con.cursor()
-    row = cur.execute("""
-        SELECT start_date FROM habits WHERE is_active = 1 AND user_id = ? LIMIT 1
-    """, (user_id,)).fetchone()
-    con.close()
+    with get_connection() as con:
+        cur = con.cursor()
+        row = cur.execute("""
+            SELECT start_date FROM habits WHERE is_active = 1 AND user_id = ? LIMIT 1
+        """, (user_id,)).fetchone()
+
 
     if row is None:
         return True  # No active habit yet
@@ -103,8 +103,8 @@ def add_habit(user_id, name, start_date, cost_per_day, reason=""):
 
 def get_active_habit(user_id):
 
-    con = get_connection()
-    cur = con.cursor()
+    with get_connection() as con:
+        cur = con.cursor()
 
     row = cur.execute("""
         SELECT * FROM habits
@@ -259,6 +259,16 @@ def delete_reward(reward_id):
 
     return {"status": "deleted", "id": reward_id}
 
+def get_rewards_by_habit(habit_id):
+    with get_connection() as con:
+        cur = con.cursor()
+        rewards = cur.execute("""
+            SELECT * FROM rewards
+            WHERE habit_id = ?
+            ORDER BY days_target ASC
+        """, (habit_id,)).fetchall()
+        
+        return [dict(r) for r in rewards]
 
 # Milestone functions
 
@@ -293,7 +303,21 @@ def add_milestone(habit_id, days_required, label):
         "label": label
     }
 
+def get_milestones_by_habit(habit_id):
 
+    with get_connection() as con:
+
+        cur = con.cursor()
+
+        milestones = cur.execute("""
+            SELECT *
+            FROM milestones
+            WHERE habit_id = ?
+            ORDER BY days_required ASC
+        """, (habit_id,)).fetchall()
+
+        return [dict(m) for m in milestones]
+    
 def achieve_milestone(milestone_id):
     with get_connection() as con:
         cur = con.cursor()
