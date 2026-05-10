@@ -134,6 +134,7 @@ def get_active_habit(user_id):
     habit["rewards"] = [dict(r) for r in rewards]
 
     con.close()
+
     return habit
 
 def update_habit(habit_id, name=None, cost_per_day=None, reason=None):
