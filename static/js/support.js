@@ -34,7 +34,7 @@ async function loadSupportHabit() {
         supportHabit = await getActiveHabit(USER_ID);
 
         const habitNameSpan =
-            document.getElementById("support-habit-name");
+            document.getElementById("pill-text");
 
         if (habitNameSpan) {
             habitNameSpan.textContent =
@@ -46,7 +46,7 @@ async function loadSupportHabit() {
         if (!supportHabit) {
 
             const messagesDiv =
-                document.getElementById("support-messages");
+                document.getElementById("chat-window");
 
             if (messagesDiv) {
 
@@ -89,10 +89,10 @@ async function loadSupportHabit() {
 function wireSupportMessages() {
 
     const sendBtn =
-        document.getElementById("send-message");
+        document.getElementById("send-btn");
 
     const messageInput =
-        document.getElementById("support-input");
+        document.getElementById("chat-input");
 
     if (sendBtn) {
 
@@ -117,10 +117,10 @@ function wireSupportMessages() {
 }
 
 // SEND MESSAGE
-async function sendSupportMessage() {
+async function sendMessage() {
 
     const input =
-        document.getElementById("support-input");
+        document.getElementById("chat-input");
 
     if (!input) return;
 
@@ -146,6 +146,11 @@ async function sendSupportMessage() {
         addChatMessage("support", response);
 
     }, 600);
+}
+
+function sendQuick(text) {
+    document.getElementById("chat-input").value = text;
+    sendMessage();
 }
 
 // CURRENT STATS
@@ -459,7 +464,9 @@ function addChatMessage(sender, text) {
         document.createElement("div");
 
     messageDiv.className =
-        `message ${sender}`;
+    sender === "user"
+        ? "msg user"
+        : "msg ai";
 
     messageDiv.innerHTML = `
         <p>
@@ -486,7 +493,7 @@ function showTypingIndicator() {
     typingDiv.id = "typing-indicator";
 
     typingDiv.className =
-        "message support";
+        "msg ai";
 
     typingDiv.innerHTML = `
         <p>
