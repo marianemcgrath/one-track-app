@@ -1,5 +1,5 @@
 // OneTrack — support.js
-// AI Support chat
+// Support chat
 
 const USER_ID = 1;
 
@@ -9,8 +9,11 @@ let conversationHistory = [];
 // Initialise
 
 document.addEventListener("DOMContentLoaded", async () => {
+
     await loadHabitContext();
+
     setupInputAutoResize();
+
     setupEnterToSend();
 });
 
@@ -25,16 +28,18 @@ async function loadHabitContext() {
         hide("loading-msg");
 
         if (!habit) {
+
             show("no-habit-msg");
+
             return;
         }
 
         habitContext = habit;
 
-        const daysElapsed = calcDaysElapsed(habit.start_date);
-
         document.getElementById("pill-text").textContent =
-            `Day ${daysElapsed} — ${habit.name}`;
+            `${habit.name}`;
+
+        startLiveTimer(habit.start_date);
 
         show("support-wrap");
 
@@ -59,7 +64,9 @@ async function loadHabitContext() {
 // Quick prompts
 
 function sendQuick(text) {
+
     document.getElementById("chat-input").value = text;
+
     sendMessage();
 }
 
@@ -74,6 +81,7 @@ async function sendMessage() {
     if (!text) return;
 
     input.value = "";
+
     input.style.height = "44px";
 
     appendMessage("user", text);
@@ -96,8 +104,7 @@ async function sendMessage() {
             },
 
             body: JSON.stringify({
-                message: text,
-                system_prompt: buildSystemPrompt()
+                message: text
             })
         });
 
@@ -117,7 +124,7 @@ async function sendMessage() {
         appendMessage("ai", data.reply);
 
         conversationHistory.push({
-            role: "assistant",
+            role: "ai",
             content: data.reply
         });
 
@@ -129,60 +136,9 @@ async function sendMessage() {
 
         appendMessage(
             "ai",
-            `ERROR: ${err.message}`
+            "Sorry, I couldn't process your request. Please try again."
         );
     }
-}
-
-// Build system prompt
-
-function buildSystemPrompt() {
-
-    if (!habitContext) {
-        return `
-            You are a warm and supportive AI coach helping users break bad habits.
-            Keep responses concise, encouraging, and human.
-        `;
-    }
-
-    const daysElapsed = calcDaysElapsed(habit.start_date);
-
-    document.getElementById("pill-text").textContent =
-        `${habit.name}`;
-
-    startLiveTimer(habit.start_date);
-
-    const daysRemaining = Math.max(0, 28 - daysElapsed);
-
-    const moneySaved =
-        (daysElapsed * habitContext.cost_per_day).toFixed(2);
-
-    return `
-        You are OneTrack AI, a supportive habit-breaking coach.
-
-        User habit:
-        ${habitContext.name}
-
-        Days completed:
-        ${daysElapsed}
-
-        Days remaining:
-        ${daysRemaining}
-
-        Money saved:
-        €${moneySaved}
-
-        User reason:
-        ${habitContext.reason || "Not specified"}
-
-        Guidelines:
-        - Be encouraging and human
-        - Keep replies concise
-        - Never sound robotic
-        - Offer supportive behavioural advice
-        - Celebrate progress naturally
-        - Avoid bullet points
-    `;
 }
 
 // Message rendering
@@ -201,7 +157,6 @@ function appendMessage(role, text) {
 
     chat.scrollTop = chat.scrollHeight;
 }
-
 
 // Loading state
 
@@ -236,7 +191,7 @@ function setLoading(isLoading) {
     chat.scrollTop = chat.scrollHeight;
 }
 
-// Helpers
+// Live timer
 
 function startLiveTimer(startDate) {
 
@@ -273,6 +228,8 @@ function startLiveTimer(startDate) {
 
     setInterval(updateTimer, 60000);
 }
+
+// Helpers
 
 function calcDaysElapsed(startDate) {
 
@@ -315,9 +272,11 @@ function setupEnterToSend() {
 }
 
 function show(id) {
+
     document.getElementById(id).style.display = "";
 }
 
 function hide(id) {
+
     document.getElementById(id).style.display = "none";
 }

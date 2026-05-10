@@ -1,12 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from dotenv import load_dotenv
-
-import requests
-import os
 import onetrack_dao as dao
-
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -126,65 +120,22 @@ def delete_reward(reward_id):
 
 # Milestone endpoints
 
-# AI Support endpoint
+# ai endpoint (placeholder)
 
 @app.route('/api/support', methods=['POST'])
-def ai_support():
-
+def ai():
     data = request.get_json()
-
     if not data:
         return jsonify({"error": "No data provided"}), 400
-
+    
     message = data.get("message", "").strip()
-    system_prompt = data.get("system_prompt", "")
-
+    
     if not message:
         return jsonify({"error": "Message is required"}), 400
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-
-    if not api_key:
-        return jsonify({"error": "Missing API key"}), 500
-
-    try:
-
-        response = requests.post(
-            "https://api.anthropic.com/v1/messages",
-
-            headers={
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json"
-            },
-
-            json={
-                "model": "claude-3-7-sonnet-latest",
-                "max_tokens": 500,
-                "system": system_prompt,
-                "messages": [
-                    {"role": "user",
-                    "content": message
-                    }]
-            },
-
-            timeout=20)
-
-        data = response.json()
-        print("ANTHROPIC RESPONSE:", data)
-
-        if response.status_code != 200:
-            print("ANTHROPIC ERROR:", data)
-            return jsonify({
-                "error": str(data)
-            }), 500
-
-        reply = data["content"][0]["text"]
-
-        return jsonify({"reply": reply})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    
+    # ai functionality would be implemented here
+    
+    return jsonify({"reply": "ai response placeholder"}), 200
 
 # Run
 if __name__ == '__main__':
