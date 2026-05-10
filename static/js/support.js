@@ -1,247 +1,624 @@
 // OneTrack — Support Page (Coach)
 
 let supportHabit = null;
+let timerInterval = null;
 
+// INITIALISE
 document.addEventListener("DOMContentLoaded", async () => {
+
     if (typeof sessionReady !== 'undefined') {
         await sessionReady;
     }
+
     await loadSupportHabit();
+
     wireSupportMessages();
+
     displayDailyEncouragement();
+
+    startLiveTimer();
 });
 
+// LOAD HABIT
 async function loadSupportHabit() {
+
     try {
+
         if (typeof USER_ID === 'undefined' || !USER_ID) {
             setTimeout(loadSupportHabit, 100);
             return;
         }
+
         supportHabit = await getActiveHabit(USER_ID);
-        
-        const habitNameSpan = document.getElementById("support-habit-name");
+
+        const habitNameSpan =
+            document.getElementById("support-habit-name");
+
         if (habitNameSpan) {
-            habitNameSpan.textContent = supportHabit ? supportHabit.name : "No active habit";
+            habitNameSpan.textContent =
+                supportHabit
+                    ? supportHabit.name
+                    : "No active habit";
         }
-        
+
         if (!supportHabit) {
-            const messagesDiv = document.getElementById("support-messages");
+
+            const messagesDiv =
+                document.getElementById("support-messages");
+
             if (messagesDiv) {
+
                 messagesDiv.innerHTML = `
                     <div class="support-message">
                         <p>👋 Welcome to OneTrack Coach!</p>
-                        <p>Create a habit on the Dashboard first — whether it's drinking, smoking, vaping, gambling, screen time, or any habit you want to break — then I can help you stay on track!</p>
-                        <a href="/" class="btn">Go to Dashboard</a>
+
+                        <p>
+                            Create a habit on the Dashboard first —
+                            whether it's smoking, drinking, gambling,
+                            screen time, vaping, or any habit you want
+                            to break — then I can help support you.
+                        </p>
+
+                        <a href="/" class="btn">
+                            Go to Dashboard
+                        </a>
                     </div>
                 `;
             }
+
+            return;
         }
+
+        // Initial welcome message
+        const stats = await getCurrentStats();
+
+        addChatMessage(
+            "support",
+            `Welcome back. You're ${stats.days} days free from ${stats.habitName}. How are you feeling today?`
+        );
+
     } catch (err) {
-        console.error('loadSupportHabit error:', err);
+
+        console.error("loadSupportHabit error:", err);
     }
 }
 
+// WIRE INPUTS
 function wireSupportMessages() {
-    const sendBtn = document.getElementById("send-message");
-    const messageInput = document.getElementById("support-input");
-    
+
+    const sendBtn =
+        document.getElementById("send-message");
+
+    const messageInput =
+        document.getElementById("support-input");
+
     if (sendBtn) {
-        sendBtn.addEventListener("click", sendSupportMessage);
+
+        sendBtn.addEventListener(
+            "click",
+            sendSupportMessage
+        );
     }
+
     if (messageInput) {
+
         messageInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") sendSupportMessage();
+
+            if (e.key === "Enter") {
+
+                e.preventDefault();
+
+                sendSupportMessage();
+            }
         });
     }
 }
 
+// SEND MESSAGE
 async function sendSupportMessage() {
-    const input = document.getElementById("support-input");
+
+    const input =
+        document.getElementById("support-input");
+
+    if (!input) return;
+
     const message = input.value.trim();
+
     if (!message) return;
-    
+
     addChatMessage("user", message);
+
     input.value = "";
+
     showTypingIndicator();
-    
+
     setTimeout(async () => {
+
         hideTypingIndicator();
+
         const stats = await getCurrentStats();
-        const response = generateSupportResponse(message, stats);
+
+        const response =
+            generateSupportResponse(message, stats);
+
         addChatMessage("support", response);
-    }, 500);
+
+    }, 600);
 }
 
+// CURRENT STATS
 async function getCurrentStats() {
+
     if (!supportHabit) return null;
-    
-    const timeElapsed = getTimeElapsed(supportHabit.start_date);
+
+    const timeElapsed =
+        getTimeElapsed(supportHabit.start_date);
+
     const daysElapsed = timeElapsed.days;
-    const moneySaved = (daysElapsed * supportHabit.cost_per_day).toFixed(2);
-    
+
+    const moneySaved =
+        (
+            daysElapsed *
+            supportHabit.cost_per_day
+        ).toFixed(2);
+
     return {
+
         habitName: supportHabit.name,
+
         days: daysElapsed,
+
         hours: timeElapsed.hours,
+
         minutes: timeElapsed.minutes,
+
         money: moneySaved,
+
         startDate: supportHabit.start_date
     };
 }
 
+// SUPPORT ENGINE
 function generateSupportResponse(message, stats) {
+
     const lowerMsg = message.toLowerCase();
-    const habitName = stats?.habitName || "your habit";
-    
-    // Struggling / difficult
-    if (lowerMsg.includes("struggl") || lowerMsg.includes("hard") || lowerMsg.includes("difficult")) {
+
+    const habitName =
+        stats?.habitName || "your habit";
+
+    // STRUGGLING
+    if (
+        lowerMsg.includes("struggl") ||
+        lowerMsg.includes("hard") ||
+        lowerMsg.includes("difficult")
+    ) {
+
         const responses = [
-            `I hear you. Breaking any habit is tough, but you've already made it ${stats?.days || 0} days. That's real progress. Take it one hour at a time. You've got this. 💪`,
-            `Struggling means you're fighting for something better. That takes courage. Remember why you wanted to break ${habitName} in the first place.`,
-            `This moment will pass. Every urge you resist makes the next one easier. Have a glass of water, go for a short walk, or call a friend. You'll feel different soon.`
+
+            `I hear you. Breaking ${habitName} is difficult, but you've already made it ${stats?.days || 0} days. That's real progress. 💪`,
+
+            `Struggling doesn't mean failing. It means you're pushing through change. One hour at a time.`,
+
+            `This feeling will pass. Every urge resisted weakens the old habit loop.`,
+
+            `You've already survived every difficult day so far. You can survive this one too.`
+
         ];
-        return responses[Math.floor(Math.random() * responses.length)];
+
+        return randomReply(responses);
     }
+
     
-    // Motivation / encouragement
-    if (lowerMsg.includes("motivate") || lowerMsg.includes("encourag") || lowerMsg.includes("keep going") || lowerMsg.includes("inspiring")) {
+    // MOTIVATION
+   
+    if (
+        lowerMsg.includes("motivate") ||
+        lowerMsg.includes("encourag") ||
+        lowerMsg.includes("keep going") ||
+        lowerMsg.includes("inspiring")
+    ) {
+
         const responses = [
-            `You're already ${stats?.days || 0} days free from ${habitName}! That's ${stats?.hours || 0} hours of progress. Every day gets a little easier. 🎯`,
-            `You're not giving something up — you're gaining freedom, better health, and €${stats?.money || 0} back in your pocket. Keep going!`,
-            `One day at a time. You've done ${stats?.days || 0} days already — you can absolutely do today. I believe in you.`,
-            `Think about how far you've come. The first few days are the hardest, and you've already survived them. You're stronger than you know.`
+
+            `You're already ${stats?.days || 0} days free from ${habitName}. That's huge progress.`,
+
+            `€${stats?.money || 0} saved already. Your future self will thank you.`,
+
+            `You're building freedom one day at a time. Keep going. 🎯`,
+
+            `The hardest days are usually at the beginning — and you've already made it this far.`
+
         ];
-        return responses[Math.floor(Math.random() * responses.length)];
+
+        return randomReply(responses);
     }
+
+    // STATS
     
-    // Stats / progress
-    if (lowerMsg.includes("stats") || lowerMsg.includes("progress") || lowerMsg.includes("how am i doing") || lowerMsg.includes("show me")) {
-        if (!stats) return `Create a habit on the Dashboard first (like "Drinking" or "Smoking"), then I can show you your stats!`;
-        return `📊 Here are your current stats for "${habitName}":\n• ${stats.days} days, ${stats.hours} hours, ${stats.minutes} minutes free\n• €${stats.money} saved\n• ${Math.min(100, Math.floor((stats.days / 28) * 100))}% of your 28-day goal. Well done!`;
-    }
-    
-    // Body / recovery / health
-    if (lowerMsg.includes("body") || lowerMsg.includes("recovery") || lowerMsg.includes("health") || lowerMsg.includes("healing")) {
-        const days = stats?.days || 0;
-        if (days < 1) {
-            return "Within hours of stopping, your body begins to recover. Heart rate starts to normalise and energy levels begin to stabilise. You're already on the right track!";
+    if (
+        lowerMsg.includes("stats") ||
+        lowerMsg.includes("progress") ||
+        lowerMsg.includes("how am i doing")
+    ) {
+
+        if (!stats) {
+
+            return `
+Create a habit first on the Dashboard
+and then I can track your progress.
+            `;
         }
-        if (days < 7) {
-            return "The first week is often the hardest. Your body is adjusting to life without the habit. Sleep and energy might be affected, but this passes. You're doing brilliantly to get this far.";
-        }
-        if (days < 14) {
-            return "By week two, many people notice better sleep, clearer thinking, and more stable energy throughout the day. Your body is adapting to its new normal. Keep going!";
-        }
-        if (days < 28) {
-            return "You're past the worst of it. Most withdrawal symptoms have faded, and you're building new, healthier patterns. This is where real change happens.";
-        }
-        return "Congratulations on reaching 28 days! You've proven you can do this. Your body has made significant progress, and you've built incredible momentum. Keep protecting your progress.";
+
+        return `
+📊 Your Progress
+
+• ${stats.days} days
+• ${stats.hours} hours
+• ${stats.minutes} minutes
+• €${stats.money} saved
+
+🎯 ${Math.min(
+            100,
+            Math.floor((stats.days / 28) * 100)
+        )}% of your 28-day goal completed.
+        `;
     }
+
+    // BODY / RECOVERY
     
-    // Cravings / urges
-    if (lowerMsg.includes("craving") || lowerMsg.includes("urge") || lowerMsg.includes("want to") && (lowerMsg.includes("give in") || lowerMsg.includes("relapse"))) {
-        return "Urges usually last only 3–5 minutes. Try this: take 10 deep breaths, drink a cold glass of water, or do 10 jumping jacks. The urge will pass whether you give in or not — so why not let it pass without? You've got this.";
+    if (
+        lowerMsg.includes("body") ||
+        lowerMsg.includes("recovery") ||
+        lowerMsg.includes("health") ||
+        lowerMsg.includes("healing")
+    ) {
+
+        return getRecoveryMessage(stats?.days || 0);
     }
-    
-    // Boredom
-    if (lowerMsg.includes("bored") || lowerMsg.includes("nothing to do")) {
+
+    // CRAVINGS
+    if (
+
+        lowerMsg.includes("craving") ||
+
+        lowerMsg.includes("urge") ||
+
+        (
+            lowerMsg.includes("want to") &&
+
+            (
+                lowerMsg.includes("give in") ||
+                lowerMsg.includes("relapse")
+            )
+        )
+    ) {
+
         const responses = [
-            `Boredom is a common trigger. Can you go for a short walk, call a friend, listen to a podcast, or start a small task around the house? Keeping your hands and mind busy really helps.`,
-            `Boredom passes. Try learning something new on your phone, doing some stretching, or even just changing your environment — go to a different room or step outside for a minute.`
+
+            `Urges usually peak and fade within a few minutes. Breathe slowly and let it pass.`,
+
+            `Try changing your environment for five minutes — even standing outside can help.`,
+
+            `The urge will pass whether you act on it or not. Let it pass without giving in.`,
+
+            `Drink some water, stretch, or walk for a minute. Cravings lose power when you interrupt them.`
+
         ];
-        return responses[Math.floor(Math.random() * responses.length)];
+
+        return randomReply(responses);
     }
+
+    // BOREDOM
     
-    // Stress / anxiety
-    if (lowerMsg.includes("stress") || lowerMsg.includes("anxious") || lowerMsg.includes("worry")) {
+    if (
+        lowerMsg.includes("bored") ||
+        lowerMsg.includes("nothing to do")
+    ) {
+
         const responses = [
-            `Stress is a major trigger for many people. Before reaching for the habit, try this: take five slow, deep breaths. Breathe in for 4 seconds, hold for 4, out for 6. Do this five times. How do you feel now?`,
-            `It's completely normal to feel stressed. The habit won't actually reduce the stress — it just delays it. Try a 5-minute break away from screens, some fresh air, or making a cup of tea.`
+
+            `Boredom is a common trigger. Try movement, music, or a quick distraction task.`,
+
+            `Changing your environment can help reset your brain. Step outside for a minute.`,
+
+            `Your brain is looking for stimulation. Replace the old habit with something healthier.`
+
         ];
-        return responses[Math.floor(Math.random() * responses.length)];
+
+        return randomReply(responses);
     }
-    
-    // Relapse / slipped up
-    if (lowerMsg.includes("relapse") || lowerMsg.includes("slipped") || lowerMsg.includes("failed") || lowerMsg.includes("mess up")) {
+
+    // STRESS / ANXIETY
+
+    if (
+        lowerMsg.includes("stress") ||
+        lowerMsg.includes("anxious") ||
+        lowerMsg.includes("worry")
+    ) {
+
         const responses = [
-            `A slip doesn't erase your progress. You've still gone ${stats?.days || 0} days without ${habitName}. That counts for a lot. The important thing is what you do next. Get straight back on track. You haven't failed — you're learning.`,
-            `One moment doesn't define your journey. Look at how far you've come. Take a deep breath, forgive yourself, and recommit. You can absolutely do this.`
+
+            `Take five slow breaths. In for 4 seconds. Out for 6 seconds.`,
+
+            `Stress is temporary. The habit only masks it briefly — it doesn't solve it.`,
+
+            `Try a short break away from screens and noise. Your nervous system needs calm.`
+
         ];
-        return responses[Math.floor(Math.random() * responses.length)];
+
+        return randomReply(responses);
     }
-    
-    // Default responses (fallback)
+
+    // RELAPSE
+
+    if (
+        lowerMsg.includes("relapse") ||
+        lowerMsg.includes("slipped") ||
+        lowerMsg.includes("failed") ||
+        lowerMsg.includes("mess up")
+    ) {
+
+        const responses = [
+
+            `One difficult moment does not erase your progress.`,
+
+            `Recovery is not perfection. What matters is getting back on track quickly.`,
+
+            `You've still learned and improved. Keep moving forward.`
+
+        ];
+
+        return randomReply(responses);
+    }
+
+    // DEFAULT
+
     const defaults = [
-        `Thanks for checking in. You're doing great with "${habitName}". Type "stats" to see your progress, "motivate" for encouragement, or "struggling" if you need support.`,
-        `I'm here for you. How are you feeling about ${habitName} right now?`,
-        `Every day you stay on track is a win. What can I help you with today?`,
-        `Remember: you're building a better version of yourself, one day at a time. How can I support you right now?`
+
+        `You're doing well with ${habitName}. How can I support you today?`,
+
+        `Remember — every day away from ${habitName} is progress.`,
+
+        `Type "stats", "motivate", or "struggling" if you need support.`,
+
+        `OneTrack Coach is here whenever you need support. 💛`
+
     ];
-    return defaults[Math.floor(Math.random() * defaults.length)];
+
+    return randomReply(defaults);
 }
 
+// RECOVERY TIMELINE
+
+function getRecoveryMessage(days) {
+
+    if (days < 1) {
+
+        return `
+Your body has already started recovering.
+
+Heart rate and oxygen levels begin stabilising
+within the first 24 hours.
+        `;
+    }
+
+    if (days < 7) {
+
+        return `
+The first week is often the toughest.
+
+Your body is adjusting to life without the habit,
+and cravings may still feel strong — but this phase passes.
+        `;
+    }
+
+    if (days < 14) {
+
+        return `
+By week two many people notice:
+
+• clearer thinking
+• better sleep
+• improved energy
+• fewer automatic cravings
+
+You're making real progress.
+        `;
+    }
+
+    if (days < 28) {
+
+        return `
+You're now building long-term habit change.
+
+The old routines are weakening,
+and healthier patterns are becoming stronger.
+        `;
+    }
+
+    return `
+🎉 You've passed 28 days.
+
+You've built serious momentum and proven
+that change is possible. Protect your progress.
+    `;
+}
+
+// CHAT UI
+
 function addChatMessage(sender, text) {
-    const messagesContainer = document.getElementById("support-messages");
+
+    const messagesContainer =
+        document.getElementById("support-messages");
+
     if (!messagesContainer) return;
-    
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${sender}`;
-    // Preserve line breaks in stats messages
-    messageDiv.innerHTML = `<p>${escapeHtml(text).replace(/\n/g, '<br>')}</p>`;
+
+    const messageDiv =
+        document.createElement("div");
+
+    messageDiv.className =
+        `message ${sender}`;
+
+    messageDiv.innerHTML = `
+        <p>
+            ${escapeHtml(text).replace(/\n/g, "<br>")}
+        </p>
+    `;
+
     messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    messagesContainer.scrollTop =
+        messagesContainer.scrollHeight;
 }
 
 function showTypingIndicator() {
-    const container = document.getElementById("support-messages");
+
+    const container =
+        document.getElementById("support-messages");
+
     if (!container) return;
-    
-    const typingDiv = document.createElement("div");
+
+    const typingDiv =
+        document.createElement("div");
+
     typingDiv.id = "typing-indicator";
-    typingDiv.className = "message support";
-    typingDiv.innerHTML = "<p>Coach is typing<span>.</span><span>.</span><span>.</span></p>";
+
+    typingDiv.className =
+        "message support";
+
+    typingDiv.innerHTML = `
+        <p>
+            Coach is typing...
+        </p>
+    `;
+
     container.appendChild(typingDiv);
-    container.scrollTop = container.scrollHeight;
+
+    container.scrollTop =
+        container.scrollHeight;
 }
 
 function hideTypingIndicator() {
-    const typing = document.getElementById("typing-indicator");
-    if (typing) typing.remove();
-}
 
-function displayDailyEncouragement() {
-    const messages = [
-        "💪 Every day without your habit is a victory.",
-        "🌟 You're stronger than any urge you'll face today.",
-        "🎯 One day at a time. You've got this.",
-        "💰 Every day you save money AND improve your health.",
-        "🌅 Today is a fresh opportunity to stay on track.",
-        "🧠 You're rewiring your brain for freedom. Keep going.",
-        "🏆 Small daily wins add up to huge change."
-    ];
-    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-    const encouragementDiv = document.getElementById("daily-encouragement");
-    if (encouragementDiv) {
-        encouragementDiv.textContent = randomMsg;
+    const typing =
+        document.getElementById("typing-indicator");
+
+    if (typing) {
+        typing.remove();
     }
 }
 
+// DAILY ENCOURAGEMENT
+
+function displayDailyEncouragement() {
+
+    const messages = [
+
+        "💪 Every day without the habit is a victory.",
+
+        "🌟 You're stronger than today's urges.",
+
+        "🎯 One day at a time.",
+
+        "💰 You're saving money and improving your health.",
+
+        "🧠 Your brain is learning new patterns.",
+
+        "🏆 Small wins become major life changes."
+
+    ];
+
+    const encouragementDiv =
+        document.getElementById(
+            "daily-encouragement"
+        );
+
+    if (encouragementDiv) {
+
+        encouragementDiv.textContent =
+            randomReply(messages);
+    }
+}
+
+// LIVE TIMER
+
+function startLiveTimer() {
+
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+
+    updateLiveTimer();
+
+    timerInterval = setInterval(
+        updateLiveTimer,
+        60000
+    );
+}
+
+async function updateLiveTimer() {
+
+    if (!supportHabit) return;
+
+    const stats = await getCurrentStats();
+
+    const timer =
+        document.getElementById("live-timer");
+
+    if (!timer) return;
+
+    timer.textContent =
+        `${stats.days}d ${stats.hours}h ${stats.minutes}m free`;
+}
+
+// UTILITIES
+function randomReply(arr) {
+
+    return arr[
+        Math.floor(Math.random() * arr.length)
+    ];
+}
+
 function getTimeElapsed(startDate) {
+
     const start = new Date(startDate);
+
     const now = new Date();
+
     const diffMs = now - start;
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diffMs % (86400000)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (3600000)) / (1000 * 60));
-    return { days, hours, minutes };
+
+    const days =
+        Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    const hours =
+        Math.floor(
+            (diffMs % 86400000) /
+            (1000 * 60 * 60)
+        );
+
+    const minutes =
+        Math.floor(
+            (diffMs % 3600000) /
+            (1000 * 60)
+        );
+
+    return {
+        days,
+        hours,
+        minutes
+    };
 }
 
 function getDaysElapsed(startDate) {
+
     return getTimeElapsed(startDate).days;
 }
 
 function escapeHtml(text) {
-    const div = document.createElement('div');
+
+    const div = document.createElement("div");
+
     div.textContent = text;
+
     return div.innerHTML;
 }
