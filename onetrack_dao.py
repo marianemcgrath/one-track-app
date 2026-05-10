@@ -102,17 +102,39 @@ def add_habit(user_id, name, start_date, cost_per_day, reason=""):
 
 
 def get_active_habit(user_id):
+
     con = get_connection()
     cur = con.cursor()
+
     row = cur.execute("""
-        SELECT * FROM habits WHERE is_active = 1 AND user_id = ? LIMIT 1
+        SELECT * FROM habits
+        WHERE is_active = 1 AND user_id = ?
+        LIMIT 1
     """, (user_id,)).fetchone()
-    con.close()
 
     if row is None:
+        con.close()
         return None
-    return dict(row)
 
+    habit = dict(row)
+
+    milestones = cur.execute("""
+        SELECT * FROM milestones
+        WHERE habit_id = ?
+        ORDER BY days_required
+    """, (habit["id"],)).fetchall()
+
+    rewards = cur.execute("""
+        SELECT * FROM rewards
+        WHERE habit_id = ?
+        ORDER BY days_target
+    """, (habit["id"],)).fetchall()
+
+    habit["milestones"] = [dict(m) for m in milestones]
+    habit["rewards"] = [dict(r) for r in rewards]
+
+    con.close()
+    return habit
 
 def update_habit(habit_id, name=None, cost_per_day=None, reason=None):
     with get_connection() as con:

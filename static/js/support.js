@@ -1,7 +1,7 @@
-// AI Support chat powered by Claude API
+// OneTrack — support.js
+// AI Support chat
 
 const USER_ID = 1;
-const API_URL = "https://api.anthropic.com/v1/messages";
 
 let habitContext = null;
 let conversationHistory = [];
@@ -14,8 +14,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupEnterToSend();
 });
 
+// Load habit context
+
 async function loadHabitContext() {
+
     try {
+
         const habit = await getActiveHabit(USER_ID);
 
         hide("loading-msg");
@@ -26,173 +30,259 @@ async function loadHabitContext() {
         }
 
         habitContext = habit;
-        const daysElapsed = calcDaysElapsed(habit.start_date);
-        const moneySaved = (daysElapsed * habit.cost_per_day).toFixed(2);
 
-        // Update context pill
+        const daysElapsed = calcDaysElapsed(habit.start_date);
+
         document.getElementById("pill-text").textContent =
             `Day ${daysElapsed} — ${habit.name}`;
 
         show("support-wrap");
 
-        // Opening message from AI
-        appendMessage("ai",
+        appendMessage(
+            "ai",
             `Hi! I'm here to support you on your journey. You're on day ${daysElapsed} of breaking your ${habit.name.toLowerCase()} habit — that's real progress. 💛\n\nHow are you feeling today?`
         );
 
     } catch (err) {
+
         hide("loading-msg");
-        appendMessage("ai", "Couldn't connect to the server. Make sure Flask is running and try again.");
+
+        appendMessage(
+            "ai",
+            "Couldn't connect to the server. Please try again later."
+        );
+
+        console.error(err);
     }
 }
 
+// Quick prompts
 
-// Send message
-// Quick send buttons for common prompts
 function sendQuick(text) {
     document.getElementById("chat-input").value = text;
     sendMessage();
 }
 
+// Send message
+
 async function sendMessage() {
+
     const input = document.getElementById("chat-input");
+
     const text = input.value.trim();
+
     if (!text) return;
 
     input.value = "";
     input.style.height = "44px";
 
     appendMessage("user", text);
+
     setLoading(true);
 
-    // Build conversation history
-    conversationHistory.push({ role: "user", content: text });
+    conversationHistory.push({
+        role: "user",
+        content: text
+    });
 
     try {
-        const response = await fetch(API_URL, {
+
+        const response = await fetch(`/api/support`, {
+
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             body: JSON.stringify({
-                model: "claude-sonnet-4-20250514",
-                max_tokens: 1000,
-                system: buildSystemPrompt(),
-                messages: conversationHistory
+                message: text,
+                system_prompt: buildSystemPrompt()
             })
         });
 
         const data = await response.json();
 
+        setLoading(false);
+
         if (!response.ok) {
-            throw new Error(data.error?.message || "API error");
+            throw new Error(data.error || "AI request failed");
         }
 
-        const reply = data.content[0].text;
-        conversationHistory.push({ role: "assistant", content: reply });
+        appendMessage("ai", data.reply);
 
-        setLoading(false);
-        appendMessage("ai", reply);
+        conversationHistory.push({
+            role: "assistant",
+            content: data.reply
+        });
 
     } catch (err) {
+
         setLoading(false);
-        appendMessage("ai", "Sorry, I couldn't get a response right now. Try again in a moment.");
-        console.error("AI Support error:", err.message);
+
+        appendMessage(
+            "ai",
+            "Sorry — AI support is temporarily unavailable right now. Please try again shortly."
+        );
+
+        console.error("AI Support error:", err);
     }
 }
 
-// System prompt builder
-// This provides context to the AI about the user's habit-breaking journey, so it can give more personalized and relevant support.
+// Build system prompt
+
 function buildSystemPrompt() {
+
     if (!habitContext) {
-        return `You are a warm, encouraging habit-breaking coach called OneTrack AI. 
-                Keep responses concise, human, and supportive.`;
+        return `
+            You are a warm and supportive AI coach helping users break bad habits.
+            Keep responses concise, encouraging, and human.
+        `;
     }
 
     const daysElapsed = calcDaysElapsed(habitContext.start_date);
+
     const daysRemaining = Math.max(0, 28 - daysElapsed);
-    const moneySaved = (daysElapsed * habitContext.cost_per_day).toFixed(2);
-    const milestones = habitContext.milestones || [];
-    const achieved = milestones.filter(m => m.achieved).length;
 
-return `You are a warm, encouraging habit-breaking coach called OneTrack AI, built into the OneTrack app.
+    const moneySaved =
+        (daysElapsed * habitContext.cost_per_day).toFixed(2);
 
-The user is currently breaking the following habit: ${habitContext.name}.
-- They started on: ${habitContext.start_date}
-- Days elapsed: ${daysElapsed} out of 28
-- Days remaining: ${daysRemaining}
-- Money saved so far: €${moneySaved}
-- Their reason for quitting: ${habitContext.reason || "not specified"}
-- Milestones achieved: ${achieved} out of ${milestones.length}
+    return `
+        You are OneTrack AI, a supportive habit-breaking coach.
 
-// ADD GUIDELINES FOR SUPPORTIVE RESPONSES ABOVE;
-`;
+        User habit:
+        ${habitContext.name}
 
+        Days completed:
+        ${daysElapsed}
+
+        Days remaining:
+        ${daysRemaining}
+
+        Money saved:
+        €${moneySaved}
+
+        User reason:
+        ${habitContext.reason || "Not specified"}
+
+        Guidelines:
+        - Be encouraging and human
+        - Keep replies concise
+        - Never sound robotic
+        - Offer supportive behavioural advice
+        - Celebrate progress naturally
+        - Avoid bullet points
+    `;
 }
 
-// UI Helpers
+// Message rendering
 
-// Append message to chat
-function appendMessage(sender, text) {
-    const chat = document.getElementById("chat");
+function appendMessage(role, text) {
+
+    const chat = document.getElementById("chat-window");
+
     const msg = document.createElement("div");
-    msg.className = `message ${sender}`;
+
+    msg.className = `msg ${role}`;
+
     msg.textContent = text;
+
     chat.appendChild(msg);
+
     chat.scrollTop = chat.scrollHeight;
 }
 
-// Set loading state on send button
+
+// Loading state
+
 function setLoading(isLoading) {
+
     const btn = document.getElementById("send-btn");
+
     btn.disabled = isLoading;
-    btn.textContent = isLoading ? "..." : "Send";
+
+    const existing = document.getElementById("thinking-msg");
+
+    if (isLoading && !existing) {
+
+        const thinking = document.createElement("div");
+
+        thinking.className = "msg ai thinking";
+
+        thinking.id = "thinking-msg";
+
+        thinking.textContent = "Thinking...";
+
+        document.getElementById("chat-window")
+            .appendChild(thinking);
+
+    } else if (!isLoading && existing) {
+
+        existing.remove();
+    }
+
+    const chat = document.getElementById("chat-window");
+
+    chat.scrollTop = chat.scrollHeight;
 }
 
-// Show/hide elements
-function show(id) {
-    document.getElementById(id).style.display = "block";
-}
+// Helpers
 
-// Hide element by ID
-function hide(id) {
-    document.getElementById(id).style.display = "none";
-}
 
-// Input auto-resize and Enter-to-send
-function setupInputAutoResize() {
-    const input = document.getElementById("chat-input");
-    input.addEventListener("input", () => {
-        input.style.height = "44px";
-        input.style.height = input.scrollHeight + "px";
-    });
-}
-
-// Send message on Enter key (without Shift)
-function setupEnterToSend() {
-    const input = document.getElementById("chat-input");
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-}
-
-// Utility to calculate days elapsed since start date
 function calcDaysElapsed(startDate) {
+
     const start = new Date(startDate);
-    const now = new Date();
-    const diffTime = Math.max(0, now - start);
-    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const today = new Date();
+
+    const diff = Math.floor(
+        (today - start) / (1000 * 60 * 60 * 24)
+    );
+
+    return Math.max(0, diff);
 }
 
-// Show/hide elements by ID
+function setupInputAutoResize() {
+
+    const input = document.getElementById("chat-input");
+
+    input.addEventListener("input", function () {
+
+        this.style.height = "44px";
+
+        this.style.height =
+            Math.min(this.scrollHeight, 120) + "px";
+    });
+}
+
+function setupEnterToSend() {
+
+    document.getElementById("chat-input")
+        .addEventListener("keydown", function (e) {
+
+            if (e.key === "Enter" && !e.shiftKey) {
+
+                e.preventDefault();
+
+                sendMessage();
+            }
+        });
+}
+
 function show(id) {
-    document.getElementById(id).style.display = "";
+
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.style.display = "";
+    }
 }
 
-// Hide element by ID
 function hide(id) {
-    document.getElementById(id).style.display = "none";
+
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.style.display = "none";
+    }
 }

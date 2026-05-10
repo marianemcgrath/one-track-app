@@ -1,6 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+import requests
+import os
 import onetrack_dao as dao
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -108,7 +114,7 @@ def claim_reward(reward_id):
     result = dao.claim_reward(reward_id)
     if "error" in result:
         return jsonify(result), 400
-    return jsonify({"status": "claimed", "reward": result})
+    return jsonify({"status": "claimed", "reward": result}), 200
 
 
 @app.route('/api/reward/<int:reward_id>', methods=['DELETE'])
@@ -119,28 +125,62 @@ def delete_reward(reward_id):
     return jsonify(result), 200
 
 # Milestone endpoints
-@app.route('/api/milestone', methods=['POST'])
-def add_milestone():
+
+# AI Support endpoint
+
+@app.route('/api/support', methods=['POST'])
+def ai_support():
+
     data = request.get_json()
+
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    result = dao.add_milestone(
-        habit_id=data['habit_id'],
-        days_required=data['days_required'],
-        label=data['label']
-    )
-    if "error" in result:
-        return jsonify(result), 400
-    return jsonify({"status": "created", "milestone": result}), 201
+    message = data.get("message", "").strip()
+    system_prompt = data.get("system_prompt", "")
 
+    if not message:
+        return jsonify({"error": "Message is required"}), 400
 
-@app.route('/api/milestone/<int:milestone_id>/achieve', methods=['PATCH'])
-def achieve_milestone(milestone_id):
-    result = dao.achieve_milestone(milestone_id)
-    if "error" in result:
-        return jsonify(result), 400
-    return jsonify({"status": "achieved", "milestone": result})
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+
+    if not api_key:
+        return jsonify({"error": "Missing API key"}), 500
+
+    try:
+
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json"
+            },
+
+            json={
+                "model": "claude-sonnet-4-20250514",
+                "max_tokens": 500,
+                "system": system_prompt,
+                "messages": [
+                    {"role": "user",
+                    "content": message
+                    }]
+            },
+
+            timeout=20)
+
+        data = response.json()
+
+        if response.status_code != 200:
+            return jsonify({"error": data}), 500
+
+        reply = data["content"][0]["text"]
+
+        return jsonify({"reply": reply})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Run
 if __name__ == '__main__':
