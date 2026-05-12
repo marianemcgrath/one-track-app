@@ -39,7 +39,7 @@ function shuffle(array) {
 
 // Dog API Reward
 async function fetchAnimalBoost(choice) {
-    const container = document.getElementById('dogImage');
+    const container = document.getElementById('boostContent');
     container.innerHTML = '<p>🐾 Fetching your reward...</p>';
 
     try {
@@ -92,7 +92,7 @@ function initGame() {
     lockBoard = false;
     gameWon = false;
 
-    document.getElementById('dogImage')
+    document.getElementById('boostContent')
         .innerHTML = '';
 
     updateStatus();
@@ -216,7 +216,7 @@ function checkMatch() {
 }
 
 function showAnimalPicker() {
-    const container = document.getElementById('dogImage');
+    const container = document.getElementById('boostContent');
     container.innerHTML = `
         <p>🎉 You won! Choose your reward:</p>
         <button onclick="fetchAnimalBoost('dog')">🐶 Dog</button>
