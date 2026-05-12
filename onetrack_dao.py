@@ -45,6 +45,25 @@ def add_user(username, email, password):
         "email": email
     }
 
+def get_all_users():
+
+    con = get_db_connection()
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT id, username
+        FROM users
+        ORDER BY username
+    """)
+
+    users = [
+        dict(row)
+        for row in cur.fetchall()
+    ]
+
+    con.close()
+
+    return users
 
 #  Habit functions
 

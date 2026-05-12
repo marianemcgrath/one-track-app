@@ -29,12 +29,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadDashboard() {
     try {
-        if (typeof USER_ID === 'undefined' || !USER_ID) {
-            console.log('Waiting for USER_ID...');
-            setTimeout(loadDashboard, 100);
+        if (!USER_ID) {
+            hide("loading-msg");
+            show("profile-section");
+            hide("no-habit-section");
+            hide("active-habit-section");
             return;
         }
-        
         const habit = await getActiveHabit(USER_ID);
         if (habit && habit.id) {
             currentHabit = habit;

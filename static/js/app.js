@@ -4,14 +4,30 @@ const API_BASE = "https://mariRmcgrath.pythonanywhere.com";
 
 // User ID management
 let USER_ID = null;
-let sessionReady = initSession();  // Start loading session
+let sessionReady = initUser();
 
-async function initSession() {
-    const res = await fetch(`${API_BASE}/api/session`);
-    const data = await res.json();
-    USER_ID = data.user_id;
-    console.log('Session ready, USER_ID:', USER_ID);
-    return USER_ID;
+async function initUser() {
+
+    const storedUser =
+        localStorage.getItem("activeUserId");
+
+    if (storedUser) {
+
+        USER_ID = parseInt(storedUser);
+
+        console.log(
+            "Active user loaded:",
+            USER_ID
+        );
+
+        return USER_ID;
+    }
+
+    USER_ID = null;
+
+    console.log("No active user selected");
+
+    return null;
 }
 
 // User functions

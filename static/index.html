@@ -44,6 +44,40 @@
 
             <!-- State A: No active habit -->
 
+            <section id="profile-section" style="display:none;">
+
+                <h2>Welcome to OneTrack</h2>
+
+                <label for="profile-select">
+                    Select Existing Profile
+                </label>
+
+                <select id="profile-select">
+                    <option value="">Choose profile...</option>
+                </select>
+
+                <hr>
+
+                <h3>Create New Profile</h3>
+
+                <form id="create-profile-form">
+
+                    <input
+                        type="text"
+                        id="profile-name"
+                        placeholder="Your name"
+                        maxlength="50"
+                        required
+                    >
+
+                    <button type="submit">
+                        Continue
+                    </button>
+
+                </form>
+
+            </section>
+            
             <section id="no-habit-section" style="display:none;">
 
                 <h2>Start Your Journey</h2>

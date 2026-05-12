@@ -41,22 +41,16 @@ def static_files(filename):
 
 
 # SESSION ENDPOINT
-@app.route('/api/session', methods=['GET'])
-def get_session():
-
-    # Demo session for development
-    return jsonify({
-        "user_id": 1,
-        "username": "demo_user"
-    })
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    users = dao.get_all_users()
+    return jsonify(users)
 
 
 # USER ENDPOINTS
 @app.route('/api/user', methods=['POST'])
 def add_user():
-
     data = request.get_json()
-
     if not data:
         return jsonify({
             "error": "No data provided"
@@ -67,7 +61,6 @@ def add_user():
         email=data['email'],
         password=data['password']
     )
-
     if "error" in result:
         return jsonify(result), 400
 

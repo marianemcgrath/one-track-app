@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     startLiveTimer();
 });
 
-// LOAD HABIT
+
 // LOAD HABIT
 async function loadSupportHabit() {
 
@@ -74,6 +74,7 @@ async function loadSupportHabit() {
     }
 }
 
+
 // WIRE INPUTS
 function wireSupportMessages() {
 
@@ -104,6 +105,7 @@ function wireSupportMessages() {
         });
     }
 }
+
 
 // SEND MESSAGE
 async function sendMessage() {
@@ -147,6 +149,7 @@ function sendQuick(text) {
     sendMessage();
 }
 
+
 // CURRENT STATS
 async function getCurrentStats() {
 
@@ -178,6 +181,7 @@ async function getCurrentStats() {
         startDate: supportHabit.start_date
     };
 }
+
 
 // SUPPORT ENGINE
 function generateSupportResponse(message, stats) {
@@ -211,7 +215,6 @@ function generateSupportResponse(message, stats) {
 
     
     // MOTIVATION
-   
     if (
         lowerMsg.includes("motivate") ||
         lowerMsg.includes("encourag") ||
@@ -234,9 +237,9 @@ function generateSupportResponse(message, stats) {
         return randomReply(responses);
     }
 
+
     // STATS
-    
-    if (
+        if (
         lowerMsg.includes("stats") ||
         lowerMsg.includes("progress") ||
         lowerMsg.includes("how am i doing")
@@ -265,8 +268,8 @@ and then I can track your progress.
         `;
     }
 
+
     // BODY / RECOVERY
-    
     if (
         lowerMsg.includes("body") ||
         lowerMsg.includes("recovery") ||
@@ -276,6 +279,7 @@ and then I can track your progress.
 
         return getRecoveryMessage(stats?.days || 0);
     }
+
 
     // CRAVINGS
     if (
@@ -309,6 +313,7 @@ and then I can track your progress.
         return randomReply(responses);
     }
 
+
     // BOREDOM
     
     if (
@@ -328,6 +333,7 @@ and then I can track your progress.
 
         return randomReply(responses);
     }
+
 
     // STRESS / ANXIETY
 
@@ -349,6 +355,7 @@ and then I can track your progress.
 
         return randomReply(responses);
     }
+
 
     // RELAPSE
 
@@ -372,6 +379,7 @@ and then I can track your progress.
         return randomReply(responses);
     }
 
+
     // DEFAULT
 
     const defaults = [
@@ -388,6 +396,7 @@ and then I can track your progress.
 
     return randomReply(defaults);
 }
+
 
 // RECOVERY TIMELINE
 
@@ -444,6 +453,7 @@ You've built serious momentum and proven
 that change is possible. Protect your progress.
     `;
 }
+
 
 // CHAT UI
 
@@ -511,6 +521,7 @@ function hideTypingIndicator() {
     }
 }
 
+
 // DAILY ENCOURAGEMENT
 
 function displayDailyEncouragement() {
@@ -543,6 +554,7 @@ function displayDailyEncouragement() {
     }
 }
 
+
 // LIVE TIMER
 
 function startLiveTimer() {
@@ -573,6 +585,7 @@ async function updateLiveTimer() {
     timer.textContent =
         `${stats.days}d ${stats.hours}h ${stats.minutes}m free`;
 }
+
 
 // UTILITIES
 function randomReply(arr) {

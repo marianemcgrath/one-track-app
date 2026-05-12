@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadRewardsPage() {
     try {
         // Double-check USER_ID is available
-        if (typeof USER_ID === 'undefined' || !USER_ID) {
+        if (typeof USER_ID  ==='undefined' || !USER_ID) {
             console.log('No USER_ID yet, retrying...');
             setTimeout(loadRewardsPage, 100);
             return;
