@@ -2,55 +2,158 @@
 const API_BASE = "https://marirmcgrath.pythonanywhere.com";
 
 
-// User ID management
-let USER_ID = null;
+// Session management
+
+let CURRENT_USER = null;
 let sessionReady = initUser();
+
+// Check logged-in session
 
 async function initUser() {
 
-    const storedUser =
-        localStorage.getItem("activeUserId");
+    try {
 
-    if (storedUser) {
-
-        USER_ID = parseInt(storedUser, 10);
-
-        console.log(
-            "Active user loaded:",
-            USER_ID
+        const res = await fetch(
+            `${API_BASE}/api/current-user`,
+            {
+                credentials: "include"
+            }
         );
 
-        return USER_ID;
+        if (!res.ok) {
+
+            console.log("No active session");
+
+            CURRENT_USER = null;
+
+            return null;
+        }
+
+        const user = await res.json();
+
+        CURRENT_USER = user;
+
+        console.log(
+            "Logged in as:",
+            CURRENT_USER.username
+        );
+
+        return CURRENT_USER;
+
+    } catch (err) {
+
+        console.error(
+            "initUser:",
+            err.message
+        );
+
+        CURRENT_USER = null;
+
+        return null;
     }
-
-    USER_ID = null;
-
-    console.log("No active user selected");
-
-    return null;
 }
 
+
 // User functions
-async function addUser(username, email, password) {
-  try {
-    const res = await fetch(`${API_BASE}/api/user`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Failed to add user");
-    return data;
-  } catch (err) {
-    console.error("addUser:", err.message);
-    throw err;
-  }
+
+async function addUser(
+    username,
+    email,
+    password
+) {
+
+    try {
+
+        const res = await fetch(
+            `${API_BASE}/api/user`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username,
+                    email,
+                    password
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(
+                data.error || "Failed to add user"
+            );
+        }
+
+        return data;
+
+    } catch (err) {
+
+        console.error(
+            "addUser:",
+            err.message
+        );
+
+        throw err;
+    }
+}
+
+
+// Login function
+
+async function loginUser(
+    email,
+    password
+) {
+
+    try {
+
+        const res = await fetch(
+            `${API_BASE}/api/login`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(
+                data.error || "Login failed"
+            );
+        }
+
+        CURRENT_USER = data.user;
+
+        return data.user;
+
+    } catch (err) {
+
+        console.error(
+            "loginUser:",
+            err.message
+        );
+
+        throw err;
+    }
 }
 
 // Habit functions
-async function getActiveHabit(userId) {
+async function getActiveHabit() {
   try {
-    const res = await fetch(`${API_BASE}/api/habit?user_id=${userId}`);
+    const res = await fetch(`${API_BASE}/api/habit`, {
+    credentials: "include"});
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Failed to get habit");
     return data.habit; // null if none active
@@ -60,13 +163,13 @@ async function getActiveHabit(userId) {
       }
     }
 
-async function addHabit(userId, name, startDate, costPerDay, reason = "") {
+async function addHabit(name, startDate, costPerDay, reason = ""){
   try {
     const res = await fetch(`${API_BASE}/api/habit`, {
+      credentials: "include",
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        user_id: userId,
         name,
         start_date: startDate,
         cost_per_day: costPerDay,
@@ -86,6 +189,7 @@ async function updateHabit(habitId, fields = {}) {
   try {
     const res = await fetch(`${API_BASE}/api/habit/${habitId}`, {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fields)
     });
@@ -101,7 +205,8 @@ async function updateHabit(habitId, fields = {}) {
 async function deleteHabit(habitId) {
   try {
     const res = await fetch(`${API_BASE}/api/habit/${habitId}`, {
-      method: "DELETE"
+      method: "DELETE",
+      credentials: "include"
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Failed to delete habit");

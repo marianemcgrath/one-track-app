@@ -29,15 +29,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function loadDashboard() {
+
     try {
-        if (!USER_ID) {
+
+        await sessionReady;
+
+        if (!CURRENT_USER) {
+
             hide("loading-msg");
             show("profile-section");
             hide("no-habit-section");
             hide("active-habit-section");
             return;
         }
-        const habit = await getActiveHabit(USER_ID);
+
+        const habit = await getActiveHabit();
         if (habit && habit.id) {
             currentHabit = habit;
             showActiveHabit(habit);
@@ -45,48 +51,15 @@ async function loadDashboard() {
             showNoHabit();
         }
     } catch (err) {
-        console.error('loadDashboard error:', err);
-        showError("loading-msg", "Could not load dashboard. Is the server running?");
-    }
-}
-
-async function loadProfiles() {
-
-    const select =
-        document.getElementById("profile-select");
-
-    if (!select) return;
-
-    const res =
-        await fetch(`${API_BASE}/api/users`);
-
-    const users =
-        await res.json();
-
-    users.forEach(user => {
-
-        const option =
-            document.createElement("option");
-
-        option.value = user.id;
-
-        option.textContent =
-            user.username;
-
-        select.appendChild(option);
-    });
-
-    select.addEventListener("change", async function () {
-
-        USER_ID = parseInt(this.value);
-
-        localStorage.setItem(
-            "activeUserId",
-            USER_ID
+        console.error(
+            "loadDashboard error:",
+            err
         );
-
-        await loadDashboard();
-    });
+        showError(
+            "loading-msg",
+            "Could not load dashboard. Is the server running?"
+        );
+    }
 }
 
 function wireProfileForm() {
@@ -117,14 +90,7 @@ function wireProfileForm() {
                 `${username}@onetrack.app`,
                 "demo"
             );
-
-            USER_ID = user.id;
-
-            localStorage.setItem(
-                "activeUserId",
-                USER_ID
-            );
-
+            
             await loadDashboard();
 
         } catch (err) {
@@ -328,7 +294,6 @@ function wireAddHabitForm() {
         try {
 
             await addHabit(
-                USER_ID,
                 name,
                 startDate,
                 cost,

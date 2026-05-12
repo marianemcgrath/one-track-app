@@ -14,7 +14,7 @@ import onetrack_dao as dao
 app = Flask(__name__)
 app.secret_key = "onetrack-secret-key"
 
-CORS(app)
+CORS(app, supports_credentials=True) # otherwise sessions/ cookies might fail
 
 
 # STATIC PAGE ROUTES
