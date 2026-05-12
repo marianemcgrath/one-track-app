@@ -5,6 +5,7 @@
 import sqlite3
 from datetime import date
 import hashlib
+from onetrack_database import get_db_connection
 
 DB = "onetrack.db"
 
@@ -62,7 +63,6 @@ def get_all_users():
     ]
 
     con.close()
-
     return users
 
 #  Habit functions

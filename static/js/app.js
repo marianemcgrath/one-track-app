@@ -280,7 +280,7 @@ function escapeHtml(text) {
 
 // Load events - wait for session first
 document.addEventListener('DOMContentLoaded', async () => {
-    await sessionReady;  // CRITICAL: Wait for USER_ID to be set
+    await sessionReady;
     
     console.log('DOM ready, USER_ID =', USER_ID);  // Should show 1
     

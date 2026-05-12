@@ -8,8 +8,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (typeof sessionReady !== 'undefined') {
         await sessionReady;
     }
-    
+    await loadProfiles();
+
     loadDashboard();
+    
     wireAddHabitForm();
     wireEditHabit();
     wireAddMilestoneForm();
@@ -47,6 +49,31 @@ async function loadDashboard() {
         console.error('loadDashboard error:', err);
         showError("loading-msg", "Could not load dashboard. Is the server running?");
     }
+}
+
+async function loadProfiles() {
+
+    const select =
+        document.getElementById("profile-select");
+
+    const res =
+        await fetch(`${API_BASE}/api/users`);
+
+    const users =
+        await res.json();
+
+    users.forEach(user => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = user.id;
+
+        option.textContent =
+            user.username;
+
+        select.appendChild(option);
+    });
 }
 
 function showNoHabit() {
