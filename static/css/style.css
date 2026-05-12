@@ -151,67 +151,6 @@ nav a.active {
   background: var(--gold-soft);
 }
 
-/* Milestone Setup Section */
-.milestone-setup {
-  background: var(--dark);
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-.milestone-setup label {
-  display: block;
-  font-size: 13px;
-  color: var(--gold-soft);
-  margin-bottom: 8px;
-  margin-top: 12px;
-}
-
-.milestone-setup label:first-of-type {
-  margin-top: 0;
-}
-
-.milestone-dropdown {
-  background: var(--grey);
-  border: 1px solid #3a3a3a;
-  border-radius: 8px;
-  color: var(--white);
-  padding: 12px;
-  font-size: 14px;
-  width: 100%;
-  cursor: pointer;
-  outline: none;
-  transition: border 0.2s ease;
-}
-
-.milestone-dropdown:hover {
-  border-color: var(--gold);
-}
-
-.milestone-dropdown:focus {
-  border-color: var(--gold);
-}
-
-.reward-input {
-  background: var(--grey);
-  border: 1px solid #3a3a3a;
-  border-radius: 8px;
-  color: var(--white);
-  padding: 12px;
-  font-size: 14px;
-  width: 100%;
-  outline: none;
-  transition: border 0.2s ease;
-}
-
-.reward-input:focus {
-  border-color: var(--gold);
-}
-
-.reward-input::placeholder {
-  color: #666;
-}
-
 /* Message styles */
 .message {
   margin-top: 12px;
@@ -238,106 +177,6 @@ nav a.active {
   border: 1px solid var(--danger);
 }
 
-/* Milestones List */
-.milestones-list {
-  margin-top: 20px;
-}
-
-.milestones-list h3 {
-  font-size: 13px;
-  color: var(--gold-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 12px;
-}
-
-.milestones-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.milestone-card {
-  background: var(--grey);
-  border: 1px solid #3a3a3a;
-  border-radius: 10px;
-  padding: 14px;
-  transition: all 0.3s ease;
-}
-
-.milestone-card.achieved {
-  border: 2px solid var(--success);
-  background: rgba(76, 175, 80, 0.1);
-  animation: pulse 0.5s ease;
-}
-
-.milestone-card.claimed {
-  opacity: 0.6;
-  background: rgba(42, 42, 42, 0.5);
-}
-
-.milestone-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.milestone-week {
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--gold);
-}
-
-.milestone-days {
-  font-size: 11px;
-  color: #888;
-}
-
-.milestone-reward {
-  font-size: 14px;
-  margin: 8px 0;
-  color: var(--white);
-}
-
-.milestone-status {
-  margin-top: 8px;
-}
-
-.claim-btn {
-  width: 100%;
-  padding: 8px;
-  background: var(--warning);
-  border: none;
-  border-radius: 6px;
-  color: var(--black);
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.claim-btn:hover {
-  background: #f57c00;
-  transform: translateY(-1px);
-}
-
-.pending {
-  display: block;
-  text-align: center;
-  padding: 6px;
-  color: #888;
-  font-size: 12px;
-}
-
-.no-milestones {
-  text-align: center;
-  color: #888;
-  padding: 20px;
-  font-size: 13px;
-  font-style: italic;
-}
-
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.02); }
@@ -346,8 +185,7 @@ nav a.active {
 
 /* Subtle Glow Effect */
 .square.completed,
-.primary-btn,
-.claim-btn {
+.primary-btn {
   box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
 }
 
@@ -388,14 +226,6 @@ nav a.active {
 .btn-danger:hover {
   background: #e05555;
   color: var(--white);
-}
-
-/* Item Actions (milestones + rewards rows) */
-.item-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 6px;
 }
 
 .item-actions button {
@@ -464,27 +294,7 @@ nav a.active {
   box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
 }
 
-/* Milestone + Reward list items */
-#milestones-list li,
-#rewards-list li {
-  background: var(--grey);
-  border-radius: 8px;
-  padding: 12px 14px;
-  margin-bottom: 8px;
-  list-style: none;
-  font-size: 14px;
-}
-
-#milestones-list li.achieved,
-#rewards-list li.claimed {
-  opacity: 0.5;
-  text-decoration: line-through;
-}
-
-/* Forms (add milestone, add reward, add habit) */
 #add-habit-form,
-#add-milestone-form,
-#add-reward-form,
 #edit-habit-form {
   display: flex;
   flex-direction: column;
@@ -521,8 +331,6 @@ textarea {
 }
 
 /* Section headings */
-#milestones-section h3,
-#rewards-section h3,
 #edit-habit-section h3 {
   font-size: 13px;
   color: var(--gold-soft);
@@ -650,8 +458,7 @@ textarea {
     margin: 0 auto;
   }
 
-  /* Active habit section uses CSS grid display to allow 
-  header/stats on left and rewards/edit on right */
+  /* Active habit section uses CSS grid display */
   
   #active-habit-section {
     display: contents;
@@ -660,13 +467,11 @@ textarea {
   /* Left column */
   #habit-header,
   #stats-row,
-  #progress-bar-wrap,
-  #milestones-section {
+  #progress-bar-wrap {
     grid-column: 1;
   }
 
   /* Right column */
-  #rewards-section,
   #edit-habit-section {
     grid-column: 2;
   }
@@ -679,10 +484,5 @@ textarea {
   /* Loading msg spans full width */
   #loading-msg {
     grid-column: 1 / -1;
-  }
-  
-  /* Milestone setup on desktop */
-  .milestone-setup {
-    margin-bottom: 20px;
   }
 }

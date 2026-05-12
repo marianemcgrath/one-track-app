@@ -17,11 +17,6 @@ def index_html():
     return send_from_directory('static', 'index.html')
 
 
-@app.route('/rewards.html')
-def rewards():
-    return send_from_directory('static', 'rewards.html')
-
-
 @app.route('/support.html')
 def support():
     return send_from_directory('static', 'support.html')
@@ -151,124 +146,6 @@ def delete_habit(habit_id):
 
     return jsonify(result)
 
-
-# REWARD ENDPOINTS
-@app.route('/api/reward', methods=['GET'])
-def get_rewards():
-
-    habit_id = request.args.get('habit_id')
-
-    if not habit_id:
-        return jsonify({
-            "error": "habit_id is required"
-        }), 400
-
-    rewards = dao.get_rewards_by_habit(habit_id)
-
-    return jsonify(rewards)
-
-
-@app.route('/api/reward', methods=['POST'])
-def add_reward():
-
-    data = request.get_json()
-
-    if not data:
-        return jsonify({
-            "error": "No data provided"
-        }), 400
-
-    result = dao.add_reward(
-        habit_id=data['habit_id'],
-        title=data['title'],
-        days_target=data['days_target']
-    )
-
-    if "error" in result:
-        return jsonify(result), 400
-
-    return jsonify({
-        "status": "created",
-        "reward": result
-    }), 201
-
-
-@app.route('/api/reward/<int:reward_id>/claim', methods=['PATCH'])
-def claim_reward(reward_id):
-
-    result = dao.claim_reward(reward_id)
-
-    if "error" in result:
-        return jsonify(result), 400
-
-    return jsonify({
-        "status": "claimed",
-        "reward": result
-    })
-
-
-@app.route('/api/reward/<int:reward_id>', methods=['DELETE'])
-def delete_reward(reward_id):
-
-    result = dao.delete_reward(reward_id)
-
-    if "error" in result:
-        return jsonify(result), 404
-
-    return jsonify(result)
-
-
-# MILESTONE ENDPOINTS
-@app.route('/api/milestone', methods=['POST'])
-def add_milestone():
-
-    data = request.get_json()
-
-    if not data:
-        return jsonify({
-            "error": "No data provided"
-        }), 400
-
-    result = dao.add_milestone(
-        habit_id=data['habit_id'],
-        days_required=data['days_required'],
-        label=data['label']
-    )
-
-    if "error" in result:
-        return jsonify(result), 400
-
-    return jsonify({
-        "status": "created",
-        "milestone": result
-    }), 201
-
-@app.route('/api/milestone', methods=['GET'])
-def get_milestones():
-
-    habit_id = request.args.get('habit_id')
-
-    if not habit_id:
-        return jsonify({
-            "error": "habit_id is required"
-        }), 400
-
-    milestones = dao.get_milestones_by_habit(habit_id)
-
-    return jsonify(milestones)
-
-@app.route('/api/milestone/<int:milestone_id>/achieve', methods=['PATCH'])
-def achieve_milestone(milestone_id):
-
-    result = dao.achieve_milestone(milestone_id)
-
-    if "error" in result:
-        return jsonify(result), 400
-
-    return jsonify({
-        "status": "achieved",
-        "milestone": result
-    })
 
 # RUN SERVER
 if __name__ == '__main__':

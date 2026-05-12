@@ -198,9 +198,7 @@ Source: https://thedecisionlab.com/biases/loss-aversion (Loss Aversion — The D
 - **Single active habit tracking** — enforced at both application and database level
 - **28-day progress tracking** — days elapsed, days remaining, and a visual progress bar
 - **Money saved calculator** — based on the user's daily cost input, updated in real time
-- **Rewards** — user-defined treats unlocked at specific day targets, with a claim action
 - **Full CRUD via REST API** — all data operations handled via AJAX calls to Flask endpoints
-- **Cascading deletes** — removing a habit automatically removes its rewards
 - **Two-state dashboard** — shows a creation form when no habit is active; shows full progress view when one is
 
 #### 4.2 User Journey
@@ -208,8 +206,7 @@ Source: https://thedecisionlab.com/biases/loss-aversion (Loss Aversion — The D
 2. Sets a quit date
 3. Tracks daily progress
 4. Views time and money recovered
-5. Reaches 28-day milestone
-6. User is allowed to select a second quit goal
+5. User is allowed to select a second quit goal
 
 ---
 
@@ -240,13 +237,10 @@ The Flask application entry point. Defines all API routes and maps them to DAO f
 | Method | Route | Description |
 |---|---|---|
 | POST | `/api/user` | Register a new user |
-| GET | `/api/habit?user_id=` | Get the active habit (with milestones & rewards) |
+| GET | `/api/habit?user_id=` | Get the active habit  |
 | POST | `/api/habit` | Create a new habit |
 | PUT | `/api/habit/<id>` | Update habit name, cost, or reason |
-| DELETE | `/api/habit/<id>` | Delete a habit (cascades to milestones & rewards) |
-| POST | `/api/reward` | Add a reward to a habit |
-| PATCH | `/api/reward/<id>/claim` | Mark a reward as claimed |
-| DELETE | `/api/reward/<id>` | Delete a reward |
+| DELETE | `/api/habit/<id>` | Delete a habit |
 
 #### `onetrack_dao.py`
 The Data Access Object layer. All direct SQLite interactions are handled here — no SQL lives in the server file. Includes guard logic (e.g. the 28-day check before allowing a new habit, duplicate claim/achieve prevention) and returns clean dictionaries to the server layer.
@@ -257,10 +251,7 @@ Creates the SQLite database and all tables if they do not exist. Run this once b
 ### 6.2 Frontend Files
 
 #### `index.html` (Dashboard)
-The main page. Handles two states: a habit creation form when no habit is active, and a full progress dashboard when one is. Displays days elapsed, days remaining, money saved, a progress bar, milestones list, and rewards list — all populated dynamically via AJAX.
-
-#### `rewards.html`
-Dedicated rewards management page.
+The main page. Handles two states: a habit creation form when no habit is active, and a full progress dashboard when one is. Displays days elapsed, days remaining, money saved and a progress bar — all populated dynamically via AJAX.
 
 #### `support.html`
 Intelligent support chat interface.
@@ -269,7 +260,7 @@ Intelligent support chat interface.
 All AJAX functions — one per API endpoint. Each function handles the fetch call, sets headers, checks the response status, and throws meaningful errors. This file has no DOM logic; it is purely the API communication layer.
 
 #### `static/js/dashboard.js`
-All DOM logic for `index.html`. Wires event listeners to forms and buttons, calls functions from `app.js`, and renders habit data, milestones, and rewards into the page.
+All DOM logic for `index.html`. Wires event listeners to forms and buttons, calls functions from `app.js`, and renders habit data into the page.
 
 #### `static/css/style.css`
 Global styles. Black and gold colour scheme, card-based layout, progress bar, responsive design.

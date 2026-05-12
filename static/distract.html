@@ -36,7 +36,7 @@
             font-weight: bold;
         }
 
-        .card-grid {
+        .memory-card-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
@@ -56,13 +56,13 @@
             transition: all 0.2s;
         }
 
-        .card.flipped,
-        .card.matched {
+        .memory-card.flipped,
+        .memory-card.matched {
             background: #d4af37;
             color: #1a1a1a;
         }
 
-        .card.matched {
+        .memory-card.matched {
             opacity: 0.5;
             cursor: default;
         }
@@ -78,14 +78,14 @@
             margin-top: 1rem;
         }
 
-        .api-reward {
+        .api-boost {
             margin-top: 1.5rem;
             padding: 1rem;
             background: #2a2a2a;
             border-radius: 12px;
         }
 
-        .api-reward img {
+        .api-boost img {
             max-width: 100%;
             max-height: 180px;
             border-radius: 12px;
@@ -118,7 +118,6 @@
 
             <nav>
                 <a href="index.html">Dashboard</a>
-                <a href="rewards.html">Rewards</a>
                 <a href="support.html">Coach</a>
                 <a href="distract.html" class="active">Distract</a>
             </nav>
@@ -159,17 +158,17 @@
                     🔄 New Game
                 </button>
 
-                <section class="api-reward">
+                <section class="api-boost">
 
                     <p>
                         🏆
                         <strong>
-                            Win to unlock a dog reward!
+                            Finish the game for a mood boost.
                         </strong>
                         🐕
                     </p>
 
-                    <div id="dogImage"></div>
+                    <div id="boostContent"></div>
 
                 </section>
 

@@ -9,12 +9,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         await sessionReady;
     }
     await loadProfiles();
-    wireProfileForm();
-    
-    loadDashboard();
 
+    wireProfileForm();
+    wireAddHabitForm();
     wireEditHabit();
-    wireAddRewardForm();
+
+    await loadDashboard();
 
     const habitSelect = document.getElementById("habit-name");
     if (habitSelect) {
@@ -75,17 +75,21 @@ async function loadProfiles() {
     });
 }
 
-async function wireProfileForm() {
+function wireProfileForm() {
 
-    const btn =
-        document.getElementById("create-profile-btn");
+    const form =
+        document.getElementById("create-profile-form");
 
-    if (!btn) return;
+    if (!form) return;
 
-    btn.addEventListener("click", async () => {
+    form.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
 
         const username =
-            document.getElementById("profile-name").value.trim();
+            document.getElementById("profile-name")
+            .value
+            .trim();
 
         if (!username) {
             alert("Please enter a name");
@@ -100,14 +104,14 @@ async function wireProfileForm() {
                 "demo"
             );
 
-            USER_ID = user.user.id;
+            USER_ID = user.id;
 
             localStorage.setItem(
                 "activeUserId",
                 USER_ID
             );
 
-            location.reload();
+            await loadDashboard();
 
         } catch (err) {
 
@@ -119,46 +123,103 @@ async function wireProfileForm() {
 }
 
 function showNoHabit() {
+
     hide("loading-msg");
-    show("no-habit-section");
+    hide("profile-section");
     hide("active-habit-section");
+
+    show("no-habit-section");
 }
 
 function showActiveHabit(habit) {
+
     hide("loading-msg");
+    hide("profile-section");
     hide("no-habit-section");
+
     show("active-habit-section");
 
-    const nameDisplay = document.getElementById("habit-name-display");
-    const reasonDisplay = document.getElementById("habit-reason-display");
-    if (nameDisplay) nameDisplay.textContent = habit.name;
-    if (reasonDisplay) reasonDisplay.textContent = habit.reason || "";
+    const nameDisplay =
+        document.getElementById("habit-name-display");
 
-    const timeElapsed = getTimeElapsed(habit.start_date);
-    const daysElapsed = timeElapsed.days;
-    const daysRemaining = Math.max(0, 28 - daysElapsed);
-    const moneySaved = (daysElapsed * habit.cost_per_day).toFixed(2);
-    const progress = Math.min(100, (daysElapsed / 28) * 100);
+    const reasonDisplay =
+        document.getElementById("habit-reason-display");
 
-    const daysElapsedEl = document.getElementById("days-elapsed");
-    const daysRemainingEl = document.getElementById("days-remaining");
-    const moneySavedEl = document.getElementById("money-saved");
-    const progressBar = document.getElementById("progress-bar");
+    if (nameDisplay) {
+        nameDisplay.textContent = habit.name;
+    }
 
-    if (daysElapsedEl) daysElapsedEl.textContent = `${timeElapsed.days} days • ${timeElapsed.hours} hours • ${timeElapsed.minutes} minutes`;
-    if (daysRemainingEl) daysRemainingEl.textContent = daysRemaining;
-    if (moneySavedEl) moneySavedEl.textContent = `€${moneySaved}`;
-    if (progressBar) progressBar.style.width = `${progress}%`;
+    if (reasonDisplay) {
+        reasonDisplay.textContent = habit.reason || "";
+    }
 
-    const editName = document.getElementById("edit-habit-name");
-    const editCost = document.getElementById("edit-habit-cost");
-    const editReason = document.getElementById("edit-habit-reason");
-    
-    if (editName) editName.value = habit.name;
-    if (editCost) editCost.value = habit.cost_per_day;
-    if (editReason) editReason.value = habit.reason || "";
+    const timeElapsed =
+        getTimeElapsed(habit.start_date);
 
-    if (habit.rewards) renderRewards(habit.rewards);
+    const daysElapsed =
+        timeElapsed.days;
+
+    const daysRemaining =
+        Math.max(0, 28 - daysElapsed);
+
+    const moneySaved =
+        (daysElapsed * habit.cost_per_day).toFixed(2);
+
+    const progress =
+        Math.min(100, (daysElapsed / 28) * 100);
+
+    const daysElapsedEl =
+        document.getElementById("days-elapsed");
+
+    const daysRemainingEl =
+        document.getElementById("days-remaining");
+
+    const moneySavedEl =
+        document.getElementById("money-saved");
+
+    const progressBar =
+        document.getElementById("progress-bar");
+
+    if (daysElapsedEl) {
+        daysElapsedEl.textContent =
+            `${timeElapsed.days} days • ${timeElapsed.hours} hours • ${timeElapsed.minutes} minutes`;
+    }
+
+    if (daysRemainingEl) {
+        daysRemainingEl.textContent =
+            daysRemaining;
+    }
+
+    if (moneySavedEl) {
+        moneySavedEl.textContent =
+            `€${moneySaved}`;
+    }
+
+    if (progressBar) {
+        progressBar.style.width =
+            `${progress}%`;
+    }
+
+    const editName =
+        document.getElementById("edit-habit-name");
+
+    const editCost =
+        document.getElementById("edit-habit-cost");
+
+    const editReason =
+        document.getElementById("edit-habit-reason");
+
+    if (editName) {
+        editName.value = habit.name;
+    }
+
+    if (editCost) {
+        editCost.value = habit.cost_per_day;
+    }
+
+    if (editReason) {
+        editReason.value = habit.reason || "";
+    }
 }
 
 // Start live timer update once
@@ -193,136 +254,173 @@ function getDaysElapsed(startDate) {
     return getTimeElapsed(startDate).days;
 }
 
-function renderRewards(rewards) {
-    const list = document.getElementById("rewards-list");
-    if (!list) return;
-    
-    list.innerHTML = "";
-
-    if (!rewards || rewards.length === 0) {
-        list.innerHTML = "<li class='empty-msg'>No rewards yet.</li>";
-        return;
-    }
-
-    rewards.forEach(r => {
-        const li = document.createElement("li");
-        li.className = r.claimed ? "claimed" : "";
-        li.innerHTML = `
-            <span>${escapeHtml(r.title)} (day ${r.days_target})</span>
-            <div class="item-actions">
-                ${!r.claimed
-                    ? `<button onclick="handleClaimReward(${r.id})">Claim</button>
-                       <button class="btn-danger" onclick="handleDeleteReward(${r.id})">Delete</button>`
-                    : `<span class="badge">✓ Claimed</span>`
-                }
-            </div>
-        `;
-        list.appendChild(li);
-    });
-}
-
-function wireAddRewardForm() {
-    const form = document.getElementById("add-reward-form");
-    if (!form) return;
-    
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const title = document.getElementById("reward-title").value.trim();
-        const daysTarget = parseInt(document.getElementById("reward-days").value);
-
-        try {
-            await addReward(currentHabit.id, title, daysTarget);
-            form.reset();
-            hide("reward-error");
-            await loadDashboard();
-        } catch (err) {
-            showError("reward-error", err.message);
-        }
-    });
-}
-
-async function handleClaimReward(rewardId) {
-    try {
-        await claimReward(rewardId);
-        await loadDashboard();
-    } catch (err) {
-        showError("reward-error", err.message);
-    }
-}
-
-async function handleDeleteReward(rewardId) {
-    if (!confirm("Delete this reward?")) return;
-    try {
-        await deleteReward(rewardId);
-        await loadDashboard();
-    } catch (err) {
-        showError("reward-error", err.message);
-    }
-}
-
 function wireAddHabitForm() {
-    const form = document.getElementById("add-habit-form");
+
+    const form =
+        document.getElementById("add-habit-form");
+
     if (!form) return;
-    
+
     form.addEventListener("submit", async (e) => {
+
         e.preventDefault();
-        
-        let name = document.getElementById("habit-name").value.trim();
-        const otherName = document.getElementById("habit-name-other");
-        if (name === "Other" && otherName && otherName.value.trim()) {
+
+        let name =
+            document.getElementById("habit-name")
+            .value
+            .trim();
+
+        const otherName =
+            document.getElementById("habit-name-other");
+
+        if (
+            name === "Other" &&
+            otherName &&
+            otherName.value.trim()
+        ) {
             name = otherName.value.trim();
         }
-        
-        const cost = parseFloat(document.getElementById("habit-cost").value);
-        const reason = document.getElementById("habit-reason").value.trim();
-        const startDate = new Date().toISOString().split("T")[0];
+
+        if (!name || name === "Other") {
+            showError(
+                "add-habit-error",
+                "Please enter a habit name"
+            );
+            return;
+        }
+
+        const cost = parseFloat(
+            document.getElementById("habit-cost").value
+        );
+
+        if (isNaN(cost) || cost < 0) {
+            showError(
+                "add-habit-error",
+                "Please enter a valid daily cost"
+            );
+            return;
+        }
+
+        const reason =
+            document.getElementById("habit-reason")
+            .value
+            .trim();
+
+        const startDate =
+            new Date()
+            .toISOString()
+            .split("T")[0];
 
         try {
-            await addHabit(USER_ID, name, startDate, cost, reason);
-            hide("add-habit-error");
-            await loadDashboard();
-        } catch (err) {
-            showError("add-habit-error", err.message);
-        }
-    });
-}
 
+            await addHabit(
+                USER_ID,
+                name,
+                startDate,
+                cost,
+                reason
+            );
+
+            hide("add-habit-error");
+
+            await loadDashboard();
+
+        } catch (err) {
+
+            showError(
+                "add-habit-error",
+                err.message
+            );
+        }
+            });
+        }
 function wireEditHabit() {
-    const editBtn = document.getElementById("edit-habit-btn");
-    const cancelBtn = document.getElementById("cancel-edit-btn");
-    const editForm = document.getElementById("edit-habit-form");
-    const deleteBtn = document.getElementById("delete-habit-btn");
-    
+
+    const editBtn =
+        document.getElementById("edit-habit-btn");
+
+    const cancelBtn =
+        document.getElementById("cancel-edit-btn");
+
+    const editForm =
+        document.getElementById("edit-habit-form");
+
+    const deleteBtn =
+        document.getElementById("delete-habit-btn");
+
     if (editBtn) {
-        editBtn.addEventListener("click", () => show("edit-habit-section"));
+        editBtn.addEventListener("click", () => {
+            show("edit-habit-section");
+        });
     }
+
     if (cancelBtn) {
-        cancelBtn.addEventListener("click", () => hide("edit-habit-section"));
+        cancelBtn.addEventListener("click", () => {
+            hide("edit-habit-section");
+        });
     }
+
     if (editForm) {
+
         editForm.addEventListener("submit", async (e) => {
+
             e.preventDefault();
-            const name = document.getElementById("edit-habit-name").value.trim();
-            const cost_per_day = parseFloat(document.getElementById("edit-habit-cost").value);
-            const reason = document.getElementById("edit-habit-reason").value.trim();
+
+            const name =
+                document.getElementById("edit-habit-name")
+                .value
+                .trim();
+
+            const cost_per_day = parseFloat(
+                document.getElementById("edit-habit-cost")
+                .value
+            );
+
+            const reason =
+                document.getElementById("edit-habit-reason")
+                .value
+                .trim();
 
             try {
-                await updateHabit(currentHabit.id, { name, cost_per_day, reason });
+
+                await updateHabit(
+                    currentHabit.id,
+                    {
+                        name,
+                        cost_per_day,
+                        reason
+                    }
+                );
+
                 hide("edit-habit-section");
+
                 await loadDashboard();
+
             } catch (err) {
+
                 alert(err.message);
             }
         });
     }
+
     if (deleteBtn) {
+
         deleteBtn.addEventListener("click", async () => {
-            if (!confirm("Delete this habit? This cannot be undone.")) return;
+
+            if (!confirm(
+                "Delete this habit? This cannot be undone."
+            )) return;
+
             try {
+
                 await deleteHabit(currentHabit.id);
+
                 currentHabit = null;
+
                 await loadDashboard();
+
             } catch (err) {
+
                 alert(err.message);
             }
         });

@@ -49,36 +49,6 @@ def create_tables():
         WHERE is_active = 1
     """)
    
-    # Rewards table
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS rewards (
-        id            INTEGER PRIMARY KEY AUTOINCREMENT,
-        habit_id      INTEGER NOT NULL,
-        title         TEXT    NOT NULL CHECK(title <> ''),
-        days_target   INTEGER NOT NULL CHECK(days_target > 0),
-        claimed       INTEGER DEFAULT 0 CHECK(claimed IN (0,1)),
-        claimed_at    DATETIME,
-        FOREIGN KEY (habit_id) 
-            REFERENCES habits(id)
-            ON DELETE CASCADE)
-    """) # If we delete habit, then rewards & milestones auto-delete
-    
-
-    # Milestones table    
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS milestones (
-        id              INTEGER PRIMARY KEY AUTOINCREMENT,
-        habit_id        INTEGER NOT NULL,
-        days_required   INTEGER NOT NULL CHECK(days_required > 0),
-        label           TEXT    NOT NULL CHECK(label <> ''),
-        achieved        INTEGER DEFAULT 0 CHECK(achieved IN (0,1)),
-        achieved_at     DATETIME,
-        FOREIGN KEY (habit_id) 
-            REFERENCES habits(id)
-            ON DELETE CASCADE)
-    """)
-
     con.commit()
     con.close()
     print("✅ Database upgraded successfully!")
