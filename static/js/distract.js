@@ -219,8 +219,8 @@ function showAnimalPicker() {
     const container = document.getElementById('dogImage');
     container.innerHTML = `
         <p>🎉 You won! Choose your reward:</p>
-        <button onclick="fetchAnimalReward('dog')">🐶 Dog</button>
-        <button onclick="fetchAnimalReward('cat')">🐱 Cat</button>
+        <button onclick="fetchAnimalBoost('dog')">🐶 Dog</button>
+        <button onclick="fetchAnimalBoost('cat')">🐱 Cat</button>
     `;
 }
 

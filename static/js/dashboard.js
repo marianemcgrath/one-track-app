@@ -55,6 +55,8 @@ async function loadProfiles() {
     const select =
         document.getElementById("profile-select");
 
+    if (!select) return;
+
     const res =
         await fetch(`${API_BASE}/api/users`);
 
@@ -72,6 +74,18 @@ async function loadProfiles() {
             user.username;
 
         select.appendChild(option);
+    });
+
+    select.addEventListener("change", async function () {
+
+        USER_ID = parseInt(this.value);
+
+        localStorage.setItem(
+            "activeUserId",
+            USER_ID
+        );
+
+        await loadDashboard();
     });
 }
 
@@ -131,13 +145,13 @@ function showNoHabit() {
     show("no-habit-section");
 }
 
-function showNoHabit() {
+function showActiveHabit(habit) {
 
     hide("loading-msg");
     hide("profile-section");
-    hide("active-habit-section");
+    hide("no-habit-section");
 
-    show("no-habit-section");
+    show("active-habit-section");
 
     const nameDisplay =
         document.getElementById("habit-name-display");
@@ -332,8 +346,9 @@ function wireAddHabitForm() {
                 err.message
             );
         }
-            });
-        }
+    });
+}
+
 function wireEditHabit() {
 
     const editBtn =

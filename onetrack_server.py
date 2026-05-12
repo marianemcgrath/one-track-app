@@ -22,17 +22,9 @@ def support():
     return send_from_directory('static', 'support.html')
 
 
-@app.route('/distraction.html')
+@app.route('/distract.html')
 def distraction():
-    return send_from_directory('static', 'distraction.html')
-
-
-# Catch-all for CSS, JS, images
-# MUST stay near bottom
-
-@app.route('/<path:filename>')
-def static_files(filename):
-    return send_from_directory('static', filename)
+    return send_from_directory('static', 'distract.html')
 
 
 # SESSION ENDPOINT
@@ -52,9 +44,9 @@ def add_user():
         }), 400
 
     result = dao.add_user(
-        username=data['username'],
-        email=data['email'],
-        password=data['password']
+        username=data.get('username'),
+        email=data.get('email'),
+        password=data.get('password')
     )
     if "error" in result:
         return jsonify(result), 400
@@ -78,10 +70,14 @@ def get_habit():
 
     habit = dao.get_active_habit(user_id)
 
+    if habit is None:
+        return jsonify({
+            "error": "Habit not found"
+        }), 404
+
     return jsonify({
         "habit": habit
     })
-
 
 @app.route('/api/habit', methods=['POST'])
 def add_habit():
@@ -94,10 +90,10 @@ def add_habit():
         }), 400
 
     result = dao.add_habit(
-        user_id=data['user_id'],
-        name=data['name'],
-        start_date=data['start_date'],
-        cost_per_day=data['cost_per_day'],
+        user_id=data.get('user_id'),
+        name=data.get('name'),
+        start_date=data.get('start_date'),
+        cost_per_day=data.get('cost_per_day'),
         reason=data.get('reason', '')
     )
 
@@ -146,7 +142,10 @@ def delete_habit(habit_id):
 
     return jsonify(result)
 
+@app.route('/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
 
 # RUN SERVER
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

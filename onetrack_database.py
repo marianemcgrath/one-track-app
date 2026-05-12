@@ -4,11 +4,13 @@ DB = "onetrack.db"
 
 def get_db_connection():
     con = sqlite3.connect(DB)
+    con.execute("PRAGMA foreign_keys = ON")
     con.row_factory = sqlite3.Row
     return con
 
 def create_tables():
     con = sqlite3.connect(DB)
+    con.execute("PRAGMA foreign_keys = ON")
     cur = con.cursor()
 
     # Enable foreign keys for SQLite, prevents invalid references and ensures cascading deletes work properly
@@ -32,7 +34,8 @@ def create_tables():
             id            INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id       INTEGER NOT NULL,
             name          TEXT    NOT NULL CHECK(name <> ''),
-            start_date     DATE    NOT NULL,
+            start_date    DATE    NOT NULL,
+            created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
             cost_per_day  REAL    NOT NULL CHECK(cost_per_day >= 0),
             reason        TEXT,
             is_active     INTEGER DEFAULT 1 CHECK(is_active IN (0,1)),

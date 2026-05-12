@@ -1,5 +1,5 @@
 // AJAX calls to the Flask API
-const API_BASE = "https://mariRmcgrath.pythonanywhere.com";
+const API_BASE = "https://marirmcgrath.pythonanywhere.com";
 
 
 // User ID management
@@ -13,7 +13,7 @@ async function initUser() {
 
     if (storedUser) {
 
-        USER_ID = parseInt(storedUser);
+        USER_ID = parseInt(storedUser, 10);
 
         console.log(
             "Active user loaded:",
@@ -56,9 +56,9 @@ async function getActiveHabit(userId) {
     return data.habit; // null if none active
   } catch (err) {
     console.error("getActiveHabit:", err.message);
-    return null; // Return null instead of throwing
-  }
-}
+    return null;
+      }
+    }
 
 async function addHabit(userId, name, startDate, costPerDay, reason = "") {
   try {
