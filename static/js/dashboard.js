@@ -12,9 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     wireProfileForm();
     
     loadDashboard();
-    
+
     wireEditHabit();
-    wireAddMilestoneForm();
     wireAddRewardForm();
 
     const habitSelect = document.getElementById("habit-name");
@@ -159,7 +158,6 @@ function showActiveHabit(habit) {
     if (editCost) editCost.value = habit.cost_per_day;
     if (editReason) editReason.value = habit.reason || "";
 
-    if (habit.milestones) renderMilestones(habit.milestones);
     if (habit.rewards) renderRewards(habit.rewards);
 }
 
@@ -193,82 +191,6 @@ function getTimeElapsed(startDate) {
 
 function getDaysElapsed(startDate) {
     return getTimeElapsed(startDate).days;
-}
-
-function renderMilestones(milestones) {
-    const list = document.getElementById("milestones-list");
-    if (!list) return;
-    
-    list.innerHTML = "";
-
-    if (!milestones || milestones.length === 0) {
-        list.innerHTML = "<li class='empty-msg'>No milestones yet.</li>";
-        return;
-    }
-
-    milestones.forEach(m => {
-        const li = document.createElement("li");
-        li.className = m.achieved ? "achieved" : "";
-        li.innerHTML = `
-            <span>${escapeHtml(m.label)} (day ${m.days_required})</span>
-            <div class="item-actions">
-                ${!m.achieved
-                    ? `<button onclick="handleAchieveMilestone(${m.id})">Achieve</button>`
-                    : `<span class="badge">✓ Done</span>`
-                }
-            </div>
-        `;
-        list.appendChild(li);
-    });
-}
-
-async function addMilestoneToHabit(habitId, label, daysRequired) {
-    try {
-        const res = await fetch(`${API_BASE}/api/milestone`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                habit_id: habitId,
-                label: label,
-                days_target: daysRequired
-            })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to add milestone");
-        return data.milestone;
-    } catch (err) {
-        console.error("addMilestone:", err.message);
-        throw err;
-    }
-}
-
-function wireAddMilestoneForm() {
-    const form = document.getElementById("add-milestone-form");
-    if (!form) return;
-    
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const daysRequired = parseInt(document.getElementById("milestone-days").value);
-        const label = document.getElementById("milestone-label").value.trim();
-
-        try {
-            await addMilestoneToHabit(currentHabit.id, label, daysRequired);
-            form.reset();
-            hide("milestone-error");
-            await loadDashboard();
-        } catch (err) {
-            showError("milestone-error", err.message);
-        }
-    });
-}
-
-async function handleAchieveMilestone(milestoneId) {
-    try {
-        await achieveMilestone(milestoneId);
-        await loadDashboard();
-    } catch (err) {
-        showError("milestone-error", err.message);
-    }
 }
 
 function renderRewards(rewards) {

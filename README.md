@@ -30,7 +30,7 @@
 
 ## 1. Introduction
 
-OneTrack is a habit-breaking web application built with Flask, SQLite, and JavaScript. It gives users a focused, structured way to break one bad habit at a time — tracking their progress over 28 days, celebrating milestones, and setting rewards to keep motivation high.
+OneTrack is a habit-breaking web application built with Flask, SQLite, and JavaScript. It gives users a focused, structured way to break one bad habit at a time — tracking their progress over 28 days, and setting rewards to keep motivation high.
 
 The app was built as the main project submission for the Web Services & Applications module at ATU Galway-Mayo. It demonstrates a fully functional RESTful API with CRUD operations across multiple database tables, wired to a dynamic frontend via JavaScript (AJAX).
 
@@ -198,10 +198,9 @@ Source: https://thedecisionlab.com/biases/loss-aversion (Loss Aversion — The D
 - **Single active habit tracking** — enforced at both application and database level
 - **28-day progress tracking** — days elapsed, days remaining, and a visual progress bar
 - **Money saved calculator** — based on the user's daily cost input, updated in real time
-- **Milestones** — custom day-targets with an "achieve" action to mark them done
 - **Rewards** — user-defined treats unlocked at specific day targets, with a claim action
 - **Full CRUD via REST API** — all data operations handled via AJAX calls to Flask endpoints
-- **Cascading deletes** — removing a habit automatically removes its milestones and rewards
+- **Cascading deletes** — removing a habit automatically removes its rewards
 - **Two-state dashboard** — shows a creation form when no habit is active; shows full progress view when one is
 
 #### 4.2 User Journey
@@ -248,8 +247,6 @@ The Flask application entry point. Defines all API routes and maps them to DAO f
 | POST | `/api/reward` | Add a reward to a habit |
 | PATCH | `/api/reward/<id>/claim` | Mark a reward as claimed |
 | DELETE | `/api/reward/<id>` | Delete a reward |
-| POST | `/api/milestone` | Add a milestone to a habit |
-| PATCH | `/api/milestone/<id>/achieve` | Mark a milestone as achieved |
 
 #### `onetrack_dao.py`
 The Data Access Object layer. All direct SQLite interactions are handled here — no SQL lives in the server file. Includes guard logic (e.g. the 28-day check before allowing a new habit, duplicate claim/achieve prevention) and returns clean dictionaries to the server layer.

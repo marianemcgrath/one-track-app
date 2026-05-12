@@ -137,12 +137,6 @@ def get_active_habit(user_id):
 
     habit = dict(row)
 
-    milestones = cur.execute("""
-        SELECT * FROM milestones
-        WHERE habit_id = ?
-        ORDER BY days_required
-    """, (habit["id"],)).fetchall()
-
     rewards = cur.execute("""
         SELECT * FROM rewards
         WHERE habit_id = ?
