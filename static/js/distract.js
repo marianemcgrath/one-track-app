@@ -1,7 +1,4 @@
-// ============================================
 // OneTrack — Distraction Game
-// ============================================
-
 // Game data
 
 const EMOJIS = [
@@ -15,8 +12,8 @@ const EMOJIS = [
     '🐼'
 ];
 
-const DOG_API =
-    'https://dog.ceo/api/breeds/image/random';
+const DOG_API = 'https://dog.ceo/api/breeds/image/random';
+const CAT_API = 'https://api.thecatapi.com/v1/images/search';
 
 let cards = [];
 let flipped = [];
@@ -24,9 +21,7 @@ let matched = 0;
 let lockBoard = false;
 let gameWon = false;
 
-// ============================================
 // Helpers
-// ============================================
 
 function shuffle(array) {
 
@@ -42,62 +37,41 @@ function shuffle(array) {
     return array;
 }
 
-// ============================================
 // Dog API Reward
-// ============================================
-
-async function fetchDogReward() {
-
-    const container =
-        document.getElementById('dogImage');
-
-    container.innerHTML =
-        '<p>🐕 Fetching your reward...</p>';
+async function fetchAnimalReward(choice) {
+    const container = document.getElementById('dogImage');
+    container.innerHTML = '<p>🐾 Fetching your reward...</p>';
 
     try {
+        let imgUrl, apiSource;
 
-        const response =
-            await fetch(DOG_API);
-
-        if (!response.ok) {
-            throw new Error('Dog API failed');
+        if (choice === 'cat') {
+            const response = await fetch(CAT_API);
+            if (!response.ok) throw new Error('Cat API failed');
+            const data = await response.json();
+            imgUrl = data[0].url;
+            apiSource = 'thecatapi.com';
+        } else {
+            const response = await fetch(DOG_API);
+            if (!response.ok) throw new Error('Dog API failed');
+            const data = await response.json();
+            imgUrl = data.message;
+            apiSource = 'dog.ceo';
         }
 
-        const data =
-            await response.json();
-
         container.innerHTML = `
-            <p>
-                🎉 You beat the craving!
-            </p>
-
-            <img
-                src="${data.message}"
-                alt="Cute dog reward"
-            >
-
-            <p
-                style="
-                    font-size:0.7rem;
-                    color:#888;
-                "
-            >
-                📡 External API: dog.ceo
-            </p>
+            <p>🎉 You beat the craving!</p>
+            <img src="${imgUrl}" alt="Cute ${choice} reward">
+            <p style="font-size:0.7rem;color:#888;">📡 External API: ${apiSource}</p>
         `;
 
     } catch (error) {
-
         console.error(error);
-
-        container.innerHTML =
-            '<p>🐕 Could not fetch a dog, but you still won! 🎉</p>';
+        container.innerHTML = '<p>🐾 Could not fetch a reward, but you still won! 🎉</p>';
     }
 }
 
-// ============================================
 // Game Setup
-// ============================================
 
 function initGame() {
 
@@ -133,9 +107,7 @@ function updateStatus() {
         `Matches: ${matched} / ${EMOJIS.length}`;
 }
 
-// ============================================
 // Board Rendering
-// ============================================
 
 function renderBoard() {
 
@@ -181,9 +153,7 @@ function renderBoard() {
     });
 }
 
-// ============================================
 // Game Logic
-// ============================================
 
 function flipCard(index) {
 
@@ -229,8 +199,7 @@ function checkMatch() {
         ) {
 
             gameWon = true;
-
-            fetchDogReward();
+            showAnimalPicker();
         }
 
     } else {
@@ -246,9 +215,17 @@ function checkMatch() {
     renderBoard();
 }
 
-// ============================================
+function showAnimalPicker() {
+    const container = document.getElementById('dogImage');
+    container.innerHTML = `
+        <p>🎉 You won! Choose your reward:</p>
+        <button onclick="fetchAnimalReward('dog')">🐶 Dog</button>
+        <button onclick="fetchAnimalReward('cat')">🐱 Cat</button>
+    `;
+}
+
+
 // Reset
-// ============================================
 
 function resetGame() {
 
@@ -257,9 +234,7 @@ function resetGame() {
     }
 }
 
-// ============================================
 // App Start
-// ============================================
 
 document.addEventListener(
     'DOMContentLoaded',

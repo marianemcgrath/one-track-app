@@ -1,6 +1,7 @@
 // OneTrack — Dashboard JavaScript
 
 let currentHabit = null;
+let timerInterval = null;
 
 // Initialise
 document.addEventListener("DOMContentLoaded", async () => {
@@ -89,6 +90,22 @@ function showActiveHabit(habit) {
 
     if (habit.milestones) renderMilestones(habit.milestones);
     if (habit.rewards) renderRewards(habit.rewards);
+}
+
+// Start live timer update once
+if (!timerInterval) {
+    timerInterval = setInterval(() => {
+        if (currentHabit) {
+            const updatedTime = getTimeElapsed(currentHabit.start_date);
+
+            const daysElapsedEl = document.getElementById("days-elapsed");
+
+            if (daysElapsedEl) {
+                daysElapsedEl.textContent =
+                    `${updatedTime.days} days • ${updatedTime.hours} hours • ${updatedTime.minutes} minutes`;
+            }
+        }
+    }, 60000);
 }
 
 function getTimeElapsed(startDate) {

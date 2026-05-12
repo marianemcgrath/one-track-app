@@ -32,8 +32,9 @@ body {
 
 /* App Container */
 .app {
-  width: 360px;
-  padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
 }
 
 /* Header */
@@ -43,7 +44,7 @@ body {
 }
 
 .logo_design {
-  width: 220px;  /* Increased from 180px for bigger logo */
+  width: 220px;  
   height: auto;
   display: block;
   margin: 0 auto 16px auto;
@@ -113,9 +114,8 @@ nav a.active {
 /* Progress Grid */
 .progress-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  margin-top: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 .square {
