@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         await sessionReady;
     }
     await loadProfiles();
-
+    wireProfileForm();
+    
     loadDashboard();
     
-    wireAddHabitForm();
     wireEditHabit();
     wireAddMilestoneForm();
     wireAddRewardForm();
@@ -73,6 +73,49 @@ async function loadProfiles() {
             user.username;
 
         select.appendChild(option);
+    });
+}
+
+async function wireProfileForm() {
+
+    const btn =
+        document.getElementById("create-profile-btn");
+
+    if (!btn) return;
+
+    btn.addEventListener("click", async () => {
+
+        const username =
+            document.getElementById("profile-name").value.trim();
+
+        if (!username) {
+            alert("Please enter a name");
+            return;
+        }
+
+        try {
+
+            const user = await addUser(
+                username,
+                `${username}@onetrack.app`,
+                "demo"
+            );
+
+            USER_ID = user.user.id;
+
+            localStorage.setItem(
+                "activeUserId",
+                USER_ID
+            );
+
+            location.reload();
+
+        } catch (err) {
+
+            console.error(err);
+
+            alert("Could not create profile");
+        }
     });
 }
 
