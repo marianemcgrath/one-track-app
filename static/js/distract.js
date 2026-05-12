@@ -1,4 +1,4 @@
-// OneTrack — Distraction Game
+// OneTrack — Distraction Zone Game Logic
 // Game data
 
 const EMOJIS = [

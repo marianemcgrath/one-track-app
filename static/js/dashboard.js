@@ -131,13 +131,13 @@ function showNoHabit() {
     show("no-habit-section");
 }
 
-function showActiveHabit(habit) {
+function showNoHabit() {
 
     hide("loading-msg");
     hide("profile-section");
-    hide("no-habit-section");
+    hide("active-habit-section");
 
-    show("active-habit-section");
+    show("no-habit-section");
 
     const nameDisplay =
         document.getElementById("habit-name-display");
