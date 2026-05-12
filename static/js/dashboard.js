@@ -8,8 +8,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (typeof sessionReady !== 'undefined') {
         await sessionReady;
     }
-    await loadProfiles();
-
     wireProfileForm();
     wireAddHabitForm();
     wireEditHabit();
