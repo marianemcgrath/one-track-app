@@ -1,12 +1,24 @@
-from flask import Flask, request, jsonify, send_from_directory
+# OneTrack Server
+
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    session,
+    send_from_directory
+)
+
 from flask_cors import CORS
 import onetrack_dao as dao
 
 app = Flask(__name__)
+app.secret_key = "onetrack-secret-key"
+
 CORS(app)
 
 
 # STATIC PAGE ROUTES
+
 @app.route('/')
 def index():
     return send_from_directory('static', 'index.html')
@@ -28,16 +40,22 @@ def distraction():
 
 
 # SESSION ENDPOINT
+
 @app.route('/api/users', methods=['GET'])
 def get_users():
+
     users = dao.get_all_users()
+
     return jsonify(users)
 
 
 # USER ENDPOINTS
+
 @app.route('/api/user', methods=['POST'])
 def add_user():
+
     data = request.get_json()
+
     if not data:
         return jsonify({
             "error": "No data provided"
@@ -48,6 +66,7 @@ def add_user():
         email=data.get('email'),
         password=data.get('password')
     )
+
     if "error" in result:
         return jsonify(result), 400
 
@@ -57,16 +76,73 @@ def add_user():
     }), 201
 
 
+@app.route('/api/login', methods=['POST'])
+def login():
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({
+            "error": "No data provided"
+        }), 400
+
+    result = dao.login_user(
+        email=data.get('email'),
+        password=data.get('password')
+    )
+
+    if "error" in result:
+        return jsonify(result), 401
+
+    # Store logged-in user in session
+
+    session["user_id"] = result["id"]
+    session["username"] = result["username"]
+
+    return jsonify({
+        "status": "success",
+        "message": "Login successful",
+        "user": result
+    })
+
+
+@app.route('/api/logout', methods=['POST'])
+def logout():
+
+    session.clear()
+
+    return jsonify({
+        "status": "success",
+        "message": "Logged out successfully"
+    })
+
+
+@app.route('/api/current-user', methods=['GET'])
+def current_user():
+
+    if "user_id" not in session:
+        return jsonify({
+            "error": "Not logged in"
+        }), 401
+
+    user = dao.get_user_by_id(
+        session["user_id"]
+    )
+
+    return jsonify(user)
+
+
 # HABIT ENDPOINTS
+
 @app.route('/api/habit', methods=['GET'])
 def get_habit():
 
-    user_id = request.args.get('user_id')
-
-    if not user_id:
+    if "user_id" not in session:
         return jsonify({
-            "error": "user_id is required"
-        }), 400
+            "error": "Not logged in"
+        }), 401
+
+    user_id = session["user_id"]
 
     habit = dao.get_active_habit(user_id)
 
@@ -79,8 +155,14 @@ def get_habit():
         "habit": habit
     })
 
+
 @app.route('/api/habit', methods=['POST'])
 def add_habit():
+
+    if "user_id" not in session:
+        return jsonify({
+            "error": "Not logged in"
+        }), 401
 
     data = request.get_json()
 
@@ -90,7 +172,7 @@ def add_habit():
         }), 400
 
     result = dao.add_habit(
-        user_id=data.get('user_id'),
+        user_id=session["user_id"],
         name=data.get('name'),
         start_date=data.get('start_date'),
         cost_per_day=data.get('cost_per_day'),
@@ -142,10 +224,13 @@ def delete_habit(habit_id):
 
     return jsonify(result)
 
+
 @app.route('/<path:filename>')
 def static_files(filename):
     return send_from_directory('static', filename)
 
+
 # RUN SERVER
+
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000)

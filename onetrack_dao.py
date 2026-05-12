@@ -1,19 +1,13 @@
-# This file contains all the functions that interact with the database.
-# It is used by the other files to get and update data in the database.
-# Also, it's used to create the database and tables if they do not exist.
-
+# OneTrack DAO
 import sqlite3
 from datetime import date
-import hashlib
 
-DB = "onetrack.db"
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
 
-
-def get_connection():
-    con = sqlite3.connect(DB)
-    con.execute("PRAGMA foreign_keys = ON")
-    con.row_factory = sqlite3.Row
-    return con
+from onetrack_database import get_db_connection
 
 
 # User functions
@@ -29,11 +23,9 @@ def add_user(username, email, password):
     if not password:
         return {"error": "Password is required"}
 
-    password_hash = hashlib.sha256(
-        password.encode()
-    ).hexdigest()
+    password_hash = generate_password_hash(password)
 
-    with get_connection() as con:
+    with get_db_connection() as con:
 
         cur = con.cursor()
 
@@ -67,9 +59,55 @@ def add_user(username, email, password):
     }
 
 
+def login_user(email, password):
+
+    with get_db_connection() as con:
+
+        cur = con.cursor()
+
+        user = cur.execute("""
+            SELECT *
+            FROM users
+            WHERE email = ?
+        """, (email,)).fetchone()
+
+        if user is None:
+            return {"error": "Invalid email or password"}
+
+        if not check_password_hash(
+            user["password_hash"],
+            password
+        ):
+            return {"error": "Invalid email or password"}
+
+    return {
+        "id": user["id"],
+        "username": user["username"],
+        "email": user["email"]
+    }
+
+
+def get_user_by_id(user_id):
+
+    with get_db_connection() as con:
+
+        cur = con.cursor()
+
+        user = cur.execute("""
+            SELECT id, username, email, created_at
+            FROM users
+            WHERE id = ?
+        """, (user_id,)).fetchone()
+
+        if user is None:
+            return None
+
+    return dict(user)
+
+
 def get_all_users():
 
-    with get_connection() as con:
+    with get_db_connection() as con:
 
         cur = con.cursor()
 
@@ -91,7 +129,7 @@ def get_all_users():
 
 def can_add_new_habit(user_id):
 
-    with get_connection() as con:
+    with get_db_connection() as con:
 
         cur = con.cursor()
 
@@ -137,7 +175,7 @@ def add_habit(
             "You must complete 28 days before starting a new habit"
         }
 
-    with get_connection() as con:
+    with get_db_connection() as con:
 
         cur = con.cursor()
 
@@ -184,7 +222,7 @@ def add_habit(
 
 def get_active_habit(user_id):
 
-    with get_connection() as con:
+    with get_db_connection() as con:
 
         cur = con.cursor()
 
@@ -211,7 +249,7 @@ def update_habit(
     reason=None
 ):
 
-    with get_connection() as con:
+    with get_db_connection() as con:
 
         cur = con.cursor()
 
@@ -271,7 +309,7 @@ def update_habit(
 
 def delete_habit(habit_id):
 
-    with get_connection() as con:
+    with get_db_connection() as con:
 
         cur = con.cursor()
 
