@@ -5,7 +5,6 @@
 import sqlite3
 from datetime import date
 import hashlib
-from onetrack_database import get_db_connection
 
 DB = "onetrack.db"
 
@@ -29,6 +28,7 @@ def add_user(username, email, password):
 
     password_hash = hashlib.sha256(password.encode()).hexdigest()
 
+   
     with get_connection() as con:
         cur = con.cursor()
         try:
@@ -48,8 +48,8 @@ def add_user(username, email, password):
 
 def get_all_users():
 
-    con = get_db_connection()
-    cur = con.cursor()
+    with get_connection() as con:
+        cur = con.cursor()
 
     cur.execute("""
         SELECT id, username
@@ -62,7 +62,6 @@ def get_all_users():
         for row in cur.fetchall()
     ]
 
-    con.close()
     return users
 
 #  Habit functions
