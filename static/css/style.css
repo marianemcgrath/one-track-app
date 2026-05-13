@@ -262,21 +262,14 @@ nav a.active {
 
 /* Stats Row */
 #stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.stat-card {
-  background: var(--grey);
-  border-radius: 10px;
-  padding: 14px 10px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  grid-column: span 2;
+.stat-card-large {
+    grid-column: 1 / -1;
 }
 
 .stat-value {
