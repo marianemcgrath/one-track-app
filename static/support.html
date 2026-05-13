@@ -89,16 +89,16 @@
                 transform: translateY(0);
             }
         }
-       .msg.user {
+        .msg.user {
             align-self: flex-end;
-            background: var(--gold);
-            color: #111111;
+            background: #f0b429;
+            color: #000000 !important;
             border-bottom-right-radius: 4px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .msg.user * {
-            color: inherit;
+            color: #000000 !important;
         }
 
         .msg.ai {
@@ -243,12 +243,8 @@
 
             <nav>
                 <a href="index.html">Dashboard</a>
-                <a href="support.html">Coach</a>
+                <a href="support.html">Support</a>
                 <a href="distract.html">Distraction Zone</a>
-
-                <button id="logout-btn">
-                    Logout
-                </button>
             </nav>
 
         </header>
@@ -296,11 +292,11 @@
                 <div id="support-header">
 
                     <h2>
-                        OneTrack Coach
+                        OneTrack Support
                     </h2>
 
                     <p>
-                        Your personal habit-breaking coach.
+                        Support when cravings, stress, or doubt hit.
                     </p>
 
                     <div id="habit-context-pill">
@@ -316,12 +312,10 @@
                     <div id="live-timer"></div>
                 
                 <section class="coach-container">
-
                     <div
                         id="daily-encouragement"
                         class="daily-encouragement"
                     ></div>
-
                 </section>
 
                 <!-- Chat Window -->
@@ -412,6 +406,13 @@
 
             </section>
 
+            <button
+                id="logout-btn"
+                class="logout-bottom-btn"
+            >
+                Logout
+            </button>
+            
         </main>
 
     </div>

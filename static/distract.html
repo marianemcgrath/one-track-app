@@ -37,7 +37,6 @@
         }
 
         .memory-card-grid {
-
             display: grid;
             grid-template-columns:
                 repeat(4, 90px);
@@ -47,38 +46,35 @@
         }
 
         .memory-card {
-
             width: 90px;
             height: 90px;
-
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
             display: flex;
             align-items: center;
             justify-content: center;
-
-            font-size: 3.5rem !important;
+            font-size: 3.2rem;
             line-height: 1;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
+            transition: 0.2s ease;
+            user-select: none;
         }
 
-        @media (max-width: 768px) {
-            .memory-card-grid {
-                grid-template-columns:
-                    repeat(4, 72px);
-                gap: 10px;
-            }
+    @media (max-width: 768px) {
+        .memory-card-grid {
+            grid-template-columns:
+                repeat(4, 72px);
+            gap: 10px;
+        }
 
         .memory-card {
-
             width: 72px;
-
             height: 72px;
-
-            font-size: 2.8rem !important;
-
-            line-height: 1;
-            }
+            font-size: 2.5rem;
+            border-radius: 12px;
         }
+    }
 
         .memory-card.flipped,
         .memory-card.matched {
@@ -89,6 +85,11 @@
         .memory-card.matched {
             opacity: 0.5;
             cursor: default;
+        }
+
+        .memory-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--gold);
         }
 
         .reset-btn {
@@ -141,7 +142,7 @@
             </div>
             <nav>
                 <a href="index.html">Dashboard</a>
-                <a href="support.html">Coach</a>
+                <a href="support.html">Support</a>
                 <a href="distract.html">Distraction Zone</a>
             </nav>
 

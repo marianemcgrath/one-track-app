@@ -102,6 +102,18 @@ nav a.active {
     color: var(--black);
 }
 
+@media (max-width: 768px) {
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    #logout-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
 /* Cards */
 .card {
   background: var(--dark);
@@ -273,7 +285,7 @@ nav a.active {
 }
 
 .stat-value {
-  font-size: 22px;
+  font-size: 2.6rem;
   font-weight: 700;
   color: var(--gold);
 }
@@ -471,7 +483,7 @@ textarea {
 
   /* Larger stat values on desktop */
   .stat-value {
-    font-size: 26px;
+    font-size: 2.6rem;
   }
 
   /* Loading msg spans full width */
