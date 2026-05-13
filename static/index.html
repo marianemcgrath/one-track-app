@@ -47,27 +47,62 @@
 
                 <h2>Welcome to OneTrack</h2>
 
-                <label for="profile-select">
-                    Select Existing Profile
-                </label>
-
-
                 <hr>
 
-                <h3>Create New Profile</h3>
+                <h3>Create Account</h3>
 
                 <form id="create-profile-form">
 
                     <input
                         type="text"
                         id="profile-name"
-                        placeholder="Your name"
+                        placeholder="Username"
                         maxlength="50"
                         required
                     >
 
+                    <input
+                        type="email"
+                        id="profile-email"
+                        placeholder="Email"
+                        required
+                    >
+
+                    <input
+                        type="password"
+                        id="profile-password"
+                        placeholder="Password"
+                        required
+                    >
+
                     <button type="submit">
-                        Continue
+                        Create Account
+                    </button>
+
+                </form>
+
+                <hr>
+
+                <h3>Already have an account?</h3>
+
+                <form id="login-form">
+
+                    <input
+                        type="email"
+                        id="login-email"
+                        placeholder="Email"
+                        required
+                    >
+
+                    <input
+                        type="password"
+                        id="login-password"
+                        placeholder="Password"
+                        required
+                    >
+
+                    <button type="submit">
+                        Login
                     </button>
 
                 </form>
