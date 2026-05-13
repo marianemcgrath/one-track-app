@@ -246,14 +246,5 @@ document.addEventListener(
                 'click',
                 resetGame
             );
-
-        const logoutBtn =
-            document.getElementById("logout-btn");
-        if (logoutBtn) {
-            logoutBtn.addEventListener(
-                "click",
-                logoutUser
-            );
-        }
     }
 );

@@ -37,33 +37,49 @@
         }
 
         .memory-card-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 60px);
-            gap: 8px;
+
+            grid-template-columns:
+                repeat(4, 90px);
+
+            gap: 14px;
+
             justify-content: center;
-            margin-top: 16px;
-            }
+        }
 
         .memory-card {
-            width: 60px;
-            height: 60px;
+
+            width: 90px;
+            height: 90px;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            font-size: 1.5rem;
+
+            border-radius: 12px;
+
+            font-size: 3rem;
+
             cursor: pointer;
+
+            transition: 0.2s ease;
         }
 
-        @media (min-width: 768px) {
+        @media (max-width: 768px) {
+
             .memory-card-grid {
-                grid-template-columns: repeat(4, 75px);
+
+                grid-template-columns:
+                    repeat(4, 72px);
+
                 gap: 10px;
             }
+
             .memory-card {
-                width: 75px;
-                height: 75px;
-                font-size: 1.8rem;
+
+                width: 72px;
+                height: 72px;
+
+                font-size: 2.4rem;
             }
         }
 
@@ -130,10 +146,6 @@
                 <a href="index.html">Dashboard</a>
                 <a href="support.html">Coach</a>
                 <a href="distract.html">Distraction Zone</a>
-
-                <button id="logout-btn">
-                    Logout
-                </button>
             </nav>
 
         </header>
@@ -149,7 +161,7 @@
                     class="timer"
                     id="timer"
                 >
-                    ⏰ Beat the game to ride out the craving
+                ⏰ Beat the game and the craving!
                 </div>
 
                 <div
