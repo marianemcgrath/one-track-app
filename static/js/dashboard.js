@@ -15,6 +15,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadDashboard();
 
+    const logoutBtn =
+    document.getElementById("logout-btn");
+
+    if (logoutBtn) {
+
+        logoutBtn.addEventListener(
+            "click",
+            logoutUser
+        );
+    }
+
     const habitSelect = document.getElementById("habit-name");
     if (habitSelect) {
         habitSelect.addEventListener("change", function () {

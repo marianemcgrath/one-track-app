@@ -101,16 +101,13 @@ async function addUser(
     }
 }
 
-
 // Login function
 
 async function loginUser(
     email,
     password
 ) {
-
     try {
-
         const res = await fetch(
             `${API_BASE}/api/login`,
             {
@@ -125,27 +122,46 @@ async function loginUser(
                 })
             }
         );
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(
                 data.error || "Login failed"
             );
         }
-
         CURRENT_USER = data.user;
-
         return data.user;
-
     } catch (err) {
-
         console.error(
             "loginUser:",
             err.message
         );
 
         throw err;
+    }
+}
+
+// Logout function
+
+async function logoutUser() {
+    try {
+        await fetch(
+            `${API_BASE}/api/logout`,
+            {
+                method: "POST",
+                credentials: "include"
+            }
+        );
+
+        CURRENT_USER = null;
+
+        window.location.href = "index.html";
+
+    } catch (err) {
+
+        console.error(
+            "logoutUser:",
+            err.message
+        );
     }
 }
 

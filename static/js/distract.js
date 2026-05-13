@@ -234,19 +234,26 @@ function resetGame() {
     }
 }
 
-// App Start
+// Initialise
 
 document.addEventListener(
     'DOMContentLoaded',
     () => {
-
         initGame();
-
         document
             .getElementById('resetBtn')
             .addEventListener(
                 'click',
                 resetGame
             );
+
+        const logoutBtn =
+            document.getElementById("logout-btn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener(
+                "click",
+                logoutUser
+            );
+        }
     }
 );

@@ -6,18 +6,26 @@ let supportHabit = null;
 let timerInterval = null;
 
 // INITIALISE
+
 document.addEventListener("DOMContentLoaded", async () => {
 
     if (typeof sessionReady !== 'undefined') {
         await sessionReady;
     }
-
     await loadSupportHabit();
     wireSupportMessages();
     displayDailyEncouragement();
     startLiveTimer();
-});
 
+    const logoutBtn =
+        document.getElementById("logout-btn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener(
+            "click",
+            logoutUser
+        );
+    }
+});
 
 // LOAD HABIT
 
