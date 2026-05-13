@@ -80,24 +80,25 @@
         }
 
         @keyframes fadeUp {
-
             from {
                 opacity: 0;
                 transform: translateY(6px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
-        .msg.user {
+       .msg.user {
             align-self: flex-end;
             background: var(--gold);
             color: var(--black);
             border-bottom-right-radius: 4px;
             font-weight: 500;
+        }
+
+        .msg.user * {
+            color: inherit;
         }
 
         .msg.ai {
@@ -167,11 +168,11 @@
             font-family: inherit;
             transition: border 0.2s ease;
         }
-
+        
         #chat-input:focus {
             border-color: var(--gold);
         }
-
+        
         #send-btn {
             background: var(--gold);
             border: none;

@@ -94,7 +94,6 @@ async function loadSupportHabit() {
 
 // WIRE INPUTS
 function wireSupportMessages() {
-
     const sendBtn =
         document.getElementById("send-btn");
     const messageInput =

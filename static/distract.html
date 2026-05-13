@@ -38,12 +38,12 @@
 
         .memory-card-grid {
 
+            display: grid;
             grid-template-columns:
                 repeat(4, 90px);
-
             gap: 14px;
-
             justify-content: center;
+            margin: 20px auto;
         }
 
         .memory-card {
@@ -56,21 +56,15 @@
             justify-content: center;
 
             border-radius: 12px;
-
             font-size: 3rem;
 
             cursor: pointer;
-
-            transition: 0.2s ease;
         }
 
         @media (max-width: 768px) {
-
             .memory-card-grid {
-
                 grid-template-columns:
                     repeat(4, 72px);
-
                 gap: 10px;
             }
 
@@ -79,7 +73,7 @@
                 width: 72px;
                 height: 72px;
 
-                font-size: 2.4rem;
+                font-size: 2.2rem;
             }
         }
 

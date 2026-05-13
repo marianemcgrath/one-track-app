@@ -276,6 +276,7 @@ nav a.active {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  grid-column: span 2;
 }
 
 .stat-value {
