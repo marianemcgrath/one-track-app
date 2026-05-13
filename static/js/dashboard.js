@@ -63,41 +63,60 @@ async function loadDashboard() {
 function wireProfileForm() {
 
     const form =
-        document.getElementById("create-profile-form");
+        document.getElementById(
+            "create-profile-form"
+        );
 
     if (!form) return;
 
-    form.addEventListener("submit", async (e) => {
-
-        e.preventDefault();
-
-        const username =
-            document.getElementById("profile-name")
-            .value
-            .trim();
-
-        if (!username) {
-            alert("Please enter a name");
-            return;
+    form.addEventListener(
+        "submit",
+        async (e) => {
+            e.preventDefault();
+            const username =
+                document.getElementById(
+                    "profile-name"
+                )
+                .value
+                .trim();
+            const email =
+                document.getElementById(
+                    "profile-email"
+                )
+                .value
+                .trim();
+            const password =
+                document.getElementById(
+                    "profile-password"
+                )
+                .value
+                .trim();
+            if (
+                !username ||
+                !email ||
+                !password
+            ) {alert("Please complete all fields");
+                return;
+            }
+            try {
+                await addUser(
+                    username,
+                    email,
+                    password
+                );
+                await loginUser(
+                    email,
+                    password
+                );
+                await loadDashboard();
+            } catch (err) {
+                console.error(err);
+                alert(
+                    "Could not create profile"
+                );
+            }
         }
-
-        try {
-
-            const user = await addUser(
-                username,
-                `${username}@onetrack.app`,
-                "demo"
-            );
-            
-            await loadDashboard();
-
-        } catch (err) {
-
-            console.error(err);
-
-            alert("Could not create profile");
-        }
-    });
+    );
 }
 
 function showNoHabit() {
