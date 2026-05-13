@@ -445,10 +445,11 @@ textarea {
   /* Main content area */
   main {
     padding: 32px 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 28px;
-    align-items: start;
+    max-width: 700px;
+    margin: 0 auto;
   }
 
   /* No habit form spans full width, centred */
@@ -456,24 +457,6 @@ textarea {
     grid-column: 1 / -1;
     max-width: 440px;
     margin: 0 auto;
-  }
-
-  /* Active habit section uses CSS grid display */
-  
-  #active-habit-section {
-    display: contents;
-  }
-
-  /* Left column */
-  #habit-header,
-  #stats-row,
-  #progress-bar-wrap {
-    grid-column: 1;
-  }
-
-  /* Right column */
-  #edit-habit-section {
-    grid-column: 2;
   }
 
   /* Larger stat values on desktop */

@@ -36,24 +36,35 @@
             font-weight: bold;
         }
 
-        .card-grid {
+        .memory-card-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 1.5rem 0;
-        }
+            grid-template-columns: repeat(4, 60px);
+            gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+            }
 
-        .card {
-            aspect-ratio: 1;
-            background: #2d2d2d;
-            border: 2px solid #d4af37;
-            border-radius: 12px;
-            cursor: pointer;
+        .memory-card {
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            transition: all 0.2s;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .memory-card-grid {
+                grid-template-columns: repeat(4, 75px);
+                gap: 10px;
+            }
+            .memory-card {
+                width: 75px;
+                height: 75px;
+                font-size: 1.8rem;
+            }
         }
 
         .memory-card.flipped,
