@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await sessionReady;
     }
     wireProfileForm();
+    wireLoginForm();
     wireAddHabitForm();
     wireEditHabit();
 
@@ -113,6 +114,50 @@ function wireProfileForm() {
                 console.error(err);
                 alert(
                     "Could not create profile"
+                );
+            }
+        }
+    );
+}
+
+function wireLoginForm() {
+    const form =
+        document.getElementById(
+            "login-form"
+        );
+    if (!form) return;
+    form.addEventListener(
+        "submit",
+        async (e) => {
+            e.preventDefault();
+            const email =
+                document.getElementById(
+                    "login-email"
+                )
+                .value
+                .trim();
+            const password =
+                document.getElementById(
+                    "login-password"
+                )
+                .value
+                .trim();
+            if (!email || !password) {
+                alert(
+                    "Please complete all fields"
+                );
+                return;
+            }
+            try {
+                await loginUser(
+                    email,
+                    password
+                );
+                await loadDashboard();
+            } catch (err) {
+                console.error(err);
+                alert(
+                    "Login failed"
                 );
             }
         }
