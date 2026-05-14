@@ -2,7 +2,7 @@
 
 > *One Habit. On Track.*
 
-![Logo](static/images/onetrack_logo.png)
+![Logo](static/images/onetrack_tagline.png)
 
 **Module:** Web Services & Applications  
 **Programme:** HDip in Computing in Data Analytics  
