@@ -2,7 +2,7 @@
 
 > *One Habit. On Track.*
 
-![Logo](images/onetrack_logo.png)
+![Logo](static/images/onetrack_logo.png)
 
 **Module:** Web Services & Applications  
 **Programme:** HDip in Computing in Data Analytics  
@@ -95,31 +95,31 @@ Short, memorable and a play with the application name.
 
 **Authentication**
 
-![Authentication](images/login_image.png)
+![Authentication](static/images/login_image.png)
 
 **New Habit**
 
-![New Habit](images/new_habit.png)
+![New Habit](static/images/new_habit.png)
 
 **New Habit Menu**
 
-![Habit Menu](images/new_habit_menu.png)
+![Habit Menu](static/images/new_habit_menu.png)
 
 **Dashboard**
 
-![Dashboard](images/dashboard.png)
+![Dashboard](static/images/dashboard.png)
 
 **Support**
 
-![Support](images/support.png)
+![Support](static/images/support.png)
 
 **Distraction Zone**
 
-![Distraction Zone](images/game.png)
+![Distraction Zone](static/images/game.png)
 
 **Mobile**
 
-![Mobile Image](images/mobile_ota.png)
+![Mobile Image](static/images/mobile_ota.png)
 
 
 ## 3. Product Research
