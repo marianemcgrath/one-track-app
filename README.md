@@ -93,17 +93,31 @@ Short, memorable and a play with the application name.
 
 ### 2.4 Screenshots
 
+**Authentication**
+
 ![Authentication](images/login_image.png)
+
+**New Habit**
 
 ![New Habit](images/new_habit.png)
 
+**New Habit Menu**
+
 ![Habit Menu](images/new_habit_menu.png)
+
+**Dashboard**
 
 ![Dashboard](images/dashboard.png)
 
+**Support**
+
 ![Support](images/support.png)
 
+**Distraction Zone**
+
 ![Distraction Zone](images/game.png)
+
+**Mobile**
 
 ![Mobile Image](images/mobile_ota.png)
 
@@ -284,26 +298,34 @@ Ensure the following are installed:
 
 ```bash
 pip install -r requirements.txt
-
+```
 
 ### Steps
 
-**1. Clone the repository**
+## 1. Clone the Repository
+
+Download the project from GitHub:
 
 ```bash
 git clone https://github.com/marianemcgrath/one-track-app.git
 cd one-track-app
+```
 
+## 2. Create the Database
 
-**2. Create the database**
+Run the database setup script:
 
 ```bash
 python onetrack_database.py
+```
 
+*Expected output:*
 
-You should see: `✅ Database upgraded successfully!`
+```text
+✅ Database upgraded successfully!
+```
 
-**3. Start the Flask server**
+## 3. Start the Flask Server
 
 ```bash
 python onetrack_server.py
@@ -311,9 +333,9 @@ python onetrack_server.py
 
 This application will typically run at:
 
-```bash
 http://127.0.0.1:5000
-```
+
+---
 
 **4. Open the frontend**
 
