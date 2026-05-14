@@ -5,7 +5,7 @@ console.log("support.js loaded");
 let supportHabit = null;
 let timerInterval = null;
 
-// INITIALISE
+// Initialise
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// LOAD HABIT
+// Load Habit and Stats
 
 async function loadSupportHabit() {
 
@@ -54,13 +54,13 @@ async function loadSupportHabit() {
                     : "No active habit";
         }
 
-        // HIDE LOADING
+        // Hide Loading
 
         document.getElementById(
             "loading-msg"
         ).style.display = "none";
 
-        // NO HABIT STATE
+        // No Habit
 
         if (!supportHabit) {
             document.getElementById(
@@ -69,7 +69,7 @@ async function loadSupportHabit() {
             return;
         }
 
-        // SHOW SUPPORT UI
+        // Show Support UI
 
         document.getElementById(
             "support-wrap"
@@ -92,7 +92,7 @@ async function loadSupportHabit() {
 }
 
 
-// WIRE INPUTS
+// Wire imputs and buttons
 function wireSupportMessages() {
     const sendBtn =
         document.getElementById("send-btn");
@@ -116,7 +116,7 @@ function wireSupportMessages() {
 }
 
 
-// SEND MESSAGE
+// Send Message and Generate Response
 async function sendMessage() {
 
     const input =
@@ -144,7 +144,7 @@ function sendQuick(text) {
 }
 
 
-// CURRENT STATS
+// Current Stats Calculation
 async function getCurrentStats() {
     if (!supportHabit) return null;
     const timeElapsed =
@@ -166,7 +166,7 @@ async function getCurrentStats() {
 }
 
 
-// SUPPORT ENGINE
+// Support Response Generation
 function generateSupportResponse(message, stats) {
     const lowerMsg = message.toLowerCase();
     const habitName =
@@ -377,7 +377,7 @@ that change is possible. Protect your progress.
 }
 
 
-// CHAT UI
+// Chat UI Functions
 
 function addChatMessage(sender, text) {
 
@@ -430,7 +430,7 @@ function hideTypingIndicator() {
 }
 
 
-// DAILY ENCOURAGEMENT
+// Daily Encouragement
 
 function displayDailyEncouragement() {
     const messages = [
@@ -451,7 +451,7 @@ function displayDailyEncouragement() {
     }
 }
 
-// LIVE TIMER
+// Live Timer
 function startLiveTimer() {
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -474,7 +474,7 @@ async function updateLiveTimer() {
 }
 
 
-// UTILITIES
+// Utilities
 function randomReply(arr) {
     return arr[
         Math.floor(Math.random() * arr.length)

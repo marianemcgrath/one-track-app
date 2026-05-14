@@ -21,18 +21,14 @@ async function initUser() {
         );
 
         if (!res.ok) {
-
             console.log("No active session");
-
             CURRENT_USER = null;
-
             return null;
         }
 
         const user = await res.json();
 
         CURRENT_USER = user;
-
         console.log(
             "Logged in as:",
             CURRENT_USER.username
@@ -41,7 +37,6 @@ async function initUser() {
         return CURRENT_USER;
 
     } catch (err) {
-
         console.error(
             "initUser:",
             err.message
@@ -63,7 +58,6 @@ async function addUser(
 ) {
 
     try {
-
         const res = await fetch(
             `${API_BASE}/api/user`,
             {
@@ -91,7 +85,6 @@ async function addUser(
         return data;
 
     } catch (err) {
-
         console.error(
             "addUser:",
             err.message
@@ -153,7 +146,6 @@ async function logoutUser() {
         );
 
         CURRENT_USER = null;
-
         window.location.href = "index.html";
 
     } catch (err) {

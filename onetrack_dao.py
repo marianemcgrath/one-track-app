@@ -26,7 +26,6 @@ def add_user(username, email, password):
     password_hash = generate_password_hash(password)
 
     with get_db_connection() as con:
-
         cur = con.cursor()
 
         try:
@@ -62,9 +61,7 @@ def add_user(username, email, password):
 def login_user(email, password):
 
     with get_db_connection() as con:
-
         cur = con.cursor()
-
         user = cur.execute("""
             SELECT *
             FROM users
@@ -90,9 +87,7 @@ def login_user(email, password):
 def get_user_by_id(user_id):
 
     with get_db_connection() as con:
-
         cur = con.cursor()
-
         user = cur.execute("""
             SELECT id, username, email, created_at
             FROM users
@@ -108,9 +103,7 @@ def get_user_by_id(user_id):
 def get_all_users():
 
     with get_db_connection() as con:
-
         cur = con.cursor()
-
         cur.execute("""
             SELECT id, username
             FROM users
@@ -128,11 +121,8 @@ def get_all_users():
 # Habit functions
 
 def can_add_new_habit(user_id):
-
     with get_db_connection() as con:
-
         cur = con.cursor()
-
         row = cur.execute("""
             SELECT start_date
             FROM habits
@@ -176,7 +166,6 @@ def add_habit(
         }
 
     with get_db_connection() as con:
-
         cur = con.cursor()
 
         # Archive old active habit
@@ -236,9 +225,8 @@ def get_active_habit(user_id):
 
         if row is None:
             return None
-
+        
         habit = dict(row)
-
     return habit
 
 
@@ -310,9 +298,7 @@ def update_habit(
 def delete_habit(habit_id):
 
     with get_db_connection() as con:
-
         cur = con.cursor()
-
         habit = cur.execute("""
             SELECT id
             FROM habits

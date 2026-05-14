@@ -265,11 +265,9 @@ function showActiveHabit(habit) {
     if (editName) {
         editName.value = habit.name;
     }
-
     if (editCost) {
         editCost.value = habit.cost_per_day;
     }
-
     if (editReason) {
         editReason.value = habit.reason || "";
     }
@@ -374,7 +372,6 @@ function wireAddHabitForm() {
             );
 
             hide("add-habit-error");
-
             await loadDashboard();
 
         } catch (err) {
@@ -388,7 +385,6 @@ function wireAddHabitForm() {
 }
 
 function wireEditHabit() {
-
     const editBtn =
         document.getElementById("edit-habit-btn");
 
@@ -414,9 +410,7 @@ function wireEditHabit() {
     }
 
     if (editForm) {
-
         editForm.addEventListener("submit", async (e) => {
-
             e.preventDefault();
 
             const name =
@@ -435,7 +429,6 @@ function wireEditHabit() {
                 .trim();
 
             try {
-
                 await updateHabit(
                     currentHabit.id,
                     {
@@ -450,30 +443,22 @@ function wireEditHabit() {
                 await loadDashboard();
 
             } catch (err) {
-
                 alert(err.message);
             }
         });
     }
 
     if (deleteBtn) {
-
         deleteBtn.addEventListener("click", async () => {
-
             if (!confirm(
                 "Delete this habit? This cannot be undone."
             )) return;
 
             try {
-
                 await deleteHabit(currentHabit.id);
-
                 currentHabit = null;
-
                 await loadDashboard();
-
             } catch (err) {
-
                 alert(err.message);
             }
         });

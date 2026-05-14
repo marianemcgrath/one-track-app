@@ -207,7 +207,7 @@ def update_habit(habit_id):
 
     if "error" in result:
         return jsonify(result), 404
-
+    
     return jsonify({
         "status": "updated",
         "habit": result
@@ -216,9 +216,7 @@ def update_habit(habit_id):
 
 @app.route('/api/habit/<int:habit_id>', methods=['DELETE'])
 def delete_habit(habit_id):
-
     result = dao.delete_habit(habit_id)
-
     if "error" in result:
         return jsonify(result), 404
 

@@ -38,6 +38,7 @@ function shuffle(array) {
 }
 
 // Dog API Reward
+
 async function fetchAnimalBoost(choice) {
     const container = document.getElementById('boostContent');
     container.innerHTML = '<p>🐾 Fetching your reward...</p>';
